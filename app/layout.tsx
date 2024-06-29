@@ -1,4 +1,6 @@
 import { Source_Sans_3, Poppins } from 'next/font/google';
+import { Toaster } from '@/components/ui/sonner';
+import { TooltipProvider } from '@/components/ui/tooltip';
 
 import { cn } from '@/lib/utils';
 import './globals.css';
@@ -40,7 +42,10 @@ export default function RootLayout({
 			className={cn(sourceSans3.className, poppins.className)}
 		>
 			<body className='bg-background text-foreground font-sans'>
-				{children}
+				<TooltipProvider>
+					{children}
+					<Toaster />
+				</TooltipProvider>
 			</body>
 		</html>
 	);

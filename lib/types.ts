@@ -29,3 +29,9 @@ const paymentsSchema = z.object({
 export type Patient = z.infer<typeof patientsSchema>;
 export type Invoice = z.infer<typeof invoicesSchema>;
 export type Payment = z.infer<typeof paymentsSchema>;
+
+export type FormState = {
+	message: string;
+	fields?: Record<string, string>;
+	issues?: string[];
+};

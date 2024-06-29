@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-// import LoginForm from '@/components/auth/login-form';
+import LoginForm from '@/components/auth/login-form';
 
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
@@ -27,7 +27,7 @@ export default async function Login() {
 							Enter your email below to login to your account
 						</p>
 					</div>
-					{/* <LoginForm /> */}
+					<LoginForm />
 				</div>
 			</div>
 			<div className='hidden bg-muted lg:block'>

@@ -39,9 +39,9 @@ export default async function Invoices() {
 		data: { user },
 	} = await supabase.auth.getUser();
 
-	// if (!user) {
-	// 	return redirect('/login');
-	// }
+	if (!user) {
+		return redirect('/login');
+	}
 
 	return (
 		<div className='grid items-start gap-4 md:gap-8'>

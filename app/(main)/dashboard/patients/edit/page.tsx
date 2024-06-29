@@ -33,7 +33,19 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 
-const IndividualPatient = () => {
+import { createClient } from '@/utils/supabase/server';
+import { redirect } from 'next/navigation';
+
+const IndividualPatient = async () => {
+	const supabase = createClient();
+
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
+
+	if (!user) {
+		return redirect('/login');
+	}
 	return (
 		<div className='grid items-start gap-4 md:gap-8'>
 			<div className='mx-auto grid max-w-[59rem] flex-1 auto-rows-max gap-4'>

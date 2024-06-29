@@ -12,6 +12,7 @@ import {
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { BadgeIndianRupee, CreditCard, Users } from 'lucide-react';
+import LogoutButton from '../auth/logout-button';
 
 const ProfileDropdown = () => (
 	<DropdownMenu>
@@ -52,7 +53,9 @@ const ProfileDropdown = () => (
 				</Link>
 			</DropdownMenuItem>
 			<DropdownMenuSeparator />
-			<DropdownMenuItem>Logout</DropdownMenuItem>
+			<DropdownMenuItem asChild className='p-0'>
+				<LogoutButton />
+			</DropdownMenuItem>
 		</DropdownMenuContent>
 	</DropdownMenu>
 );

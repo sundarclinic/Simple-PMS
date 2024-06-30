@@ -6,6 +6,7 @@ import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import { PageParams } from '@/lib/types';
 import { getPatientById } from '@/lib/patients/actions';
+import PatientAddForm from '@/components/patients/add-form';
 
 const IndividualPatient = async ({ searchParams }: PageParams) => {
 	const supabase = createClient();
@@ -22,7 +23,7 @@ const IndividualPatient = async ({ searchParams }: PageParams) => {
 
 	return (
 		<div className='grid items-start gap-4 md:gap-8'>
-			<PatientEditForm patient={patient} />
+			<PatientAddForm />
 		</div>
 	);
 };

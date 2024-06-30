@@ -38,22 +38,22 @@ const LoginForm = () => {
 		},
 	});
 
+	const onSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
+		await form.trigger();
+		if (form.formState.isValid) {
+			formRef.current?.requestSubmit();
+		} else {
+			e.preventDefault();
+		}
+	};
+
 	return (
 		<Form {...form}>
 			<form
 				ref={formRef}
 				className='grid gap-4'
 				action={formAction}
-				onSubmit={async (e) => {
-					if (!form.formState.isValid) {
-						e.preventDefault();
-						await form.trigger();
-						return;
-					} else {
-						form.clearErrors();
-					}
-					e.currentTarget?.requestSubmit();
-				}}
+				onSubmit={onSubmit}
 			>
 				<FormAlert state={state} />
 				<FormField

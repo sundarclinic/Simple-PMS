@@ -1,11 +1,7 @@
-'use client';
-
-import React, { useState } from 'react';
+import React from 'react';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { DatePicker } from '../ui/date-picker';
 import {
 	FormControl,
 	FormField,
@@ -13,12 +9,12 @@ import {
 	FormLabel,
 	FormMessage,
 } from '@/components/ui/form';
-import { useFormContext } from 'react-hook-form';
+import { CalendarDatePicker } from '@/components/ui/calendar-date-picker';
 
+import { useFormContext } from 'react-hook-form';
 import { InsertPatient } from '@/db/schemas/patients';
 
 const PatientDateOfBirth = () => {
-	const [dob, setDob] = useState<Date>();
 	const { control, register } = useFormContext<InsertPatient>();
 
 	return (
@@ -28,10 +24,28 @@ const PatientDateOfBirth = () => {
 			</CardHeader>
 			<CardContent>
 				<div className='grid gap-6'>
-					<div className='grid gap-3'>
-						<Label htmlFor='status'>Date of Birth</Label>
-						<DatePicker date={dob} onSelect={setDob} />
-					</div>
+					<FormField
+						control={control}
+						name='dob'
+						render={({ field }) => (
+							<FormItem className='grid gap-3'>
+								<FormLabel>Date of Birth</FormLabel>
+								<FormControl>
+									<CalendarDatePicker
+										date={{ from: field.value }}
+										onDateSelect={({ from }) => {
+											field.onChange(from);
+										}}
+										variant='outline'
+										numberOfMonths={1}
+										className='justify-start'
+										yearsRange={200}
+									/>
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
 					<FormField
 						control={control}
 						name='age'

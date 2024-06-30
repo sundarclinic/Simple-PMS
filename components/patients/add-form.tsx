@@ -23,12 +23,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { Patient, insertPatient, InsertPatient } from '@/db/schemas/patients';
 
-interface Props
-	extends React.HTMLAttributes<React.ComponentPropsWithoutRef<'div'>> {
-	patient: Patient | null;
-}
-
-const PatientEditForm: React.FC<Props> = ({ patient }) => {
+const PatientAddForm: React.FC<Props> = () => {
 	const router = useRouter();
 	const formRef = useRef<HTMLFormElement>(null);
 	const actionFuction = patient ? editPatient(patient.id) : addPatient;
@@ -150,4 +145,4 @@ const PatientEditForm: React.FC<Props> = ({ patient }) => {
 	);
 };
 
-export default PatientEditForm;
+export default PatientAddForm;

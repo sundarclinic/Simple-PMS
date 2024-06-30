@@ -32,7 +32,7 @@ import { Separator } from '@/components/ui/separator';
 
 export default function RecentInvoice() {
 	return (
-		<Card className='overflow-hidden'>
+		<Card className='overflow-hidden w-full'>
 			<CardHeader className='flex flex-row items-start bg-muted/50'>
 				<div className='grid gap-0.5'>
 					<CardTitle className='group flex items-center gap-2 text-lg'>

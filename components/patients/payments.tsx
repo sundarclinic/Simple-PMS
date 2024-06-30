@@ -13,7 +13,6 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-
 import {
 	Table,
 	TableBody,
@@ -24,7 +23,14 @@ import {
 } from '@/components/ui/table';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 
-const PatientPayments = () => {
+import { Patient } from '@/db/schemas/patients';
+
+interface Props
+	extends React.HTMLAttributes<React.ComponentPropsWithoutRef<typeof Card>> {
+	patient: Patient | null;
+}
+
+const PatientPayments: React.FC<Props> = ({ patient }) => {
 	return (
 		<Card>
 			<CardHeader>

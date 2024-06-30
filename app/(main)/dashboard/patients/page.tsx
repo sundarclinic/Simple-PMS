@@ -35,8 +35,8 @@ export default async function Patients() {
 
 	return (
 		<div className='grid items-start gap-4'>
-			<div className='flex items-center'>
-				<div className='ml-auto flex items-center gap-2'>
+			<div className='flex items-center justify-end'>
+				<div className='flex items-center gap-2'>
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
 							<Button

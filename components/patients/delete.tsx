@@ -9,8 +9,15 @@ import {
 	CardTitle,
 } from '@/components/ui/card';
 
-const DeletePatient = () => {
-	return (
+import { Patient } from '@/db/schemas/patients';
+
+interface Props
+	extends React.HTMLAttributes<React.ComponentPropsWithoutRef<typeof Card>> {
+	patient: Patient | null;
+}
+
+const DeletePatient: React.FC<Props> = ({ patient }) => {
+	return patient ? (
 		<Card>
 			<CardHeader>
 				<CardTitle>Delete Patient</CardTitle>
@@ -25,7 +32,7 @@ const DeletePatient = () => {
 				</Button>
 			</CardContent>
 		</Card>
-	);
+	) : null;
 };
 
 export default DeletePatient;

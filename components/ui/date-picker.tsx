@@ -37,8 +37,11 @@ export const DatePicker: React.FC<Props> = ({ date, onSelect }) => {
 				<Calendar
 					mode='single'
 					selected={date}
-					onSelect={onSelect}
+					onDayClick={onSelect}
 					initialFocus
+					disabled={(date) =>
+						date > new Date() || date < new Date('1900-01-01')
+					}
 				/>
 			</PopoverContent>
 		</Popover>

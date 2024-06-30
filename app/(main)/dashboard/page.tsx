@@ -25,8 +25,8 @@ export default async function Dashboard() {
 	}
 
 	return (
-		<div className='grid items-start gap-4 md:gap-8 lg:grid-cols-3 xl:grid-cols-3'>
-			<div className='col-span-2 w-full flex flex-col gap-4 md:gap-8'>
+		<div className='grid items-start gap-4 md:gap-8 lg:grid-cols-3'>
+			<div className='lg:col-span-2 w-full flex flex-col gap-4 md:gap-8'>
 				<section className='grid grid-cols-[repeat(auto-fill,minmax(15rem,1fr))] gap-4 md:gap-8'>
 					<Card className='flex flex-col'>
 						<CardHeader className='pb-2'>

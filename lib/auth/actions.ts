@@ -1,7 +1,6 @@
 'use server';
 
 import { redirect } from 'next/navigation';
-import { headers } from 'next/headers';
 import { createClient } from '@/utils/supabase/server';
 import { loginSchema } from './types';
 import { FormState } from '@/lib/types';

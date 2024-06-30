@@ -35,3 +35,8 @@ export type FormState = {
 	fields?: Record<string, string>;
 	issues?: string[];
 };
+
+export type PageParams = {
+	params: {};
+	searchParams?: { [key: string]: string | string[] | undefined };
+};

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
@@ -39,6 +39,7 @@ const PatientImage = () => {
 
 	const supabase = createClient();
 	const currentUuid = getValues('id');
+	const inputRef = useRef<HTMLInputElement | null>(null);
 
 	const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const files = event.target.files;
@@ -108,6 +109,9 @@ const PatientImage = () => {
 					description: 'Failed to clear image. Please try again.',
 				});
 			} else {
+				if (inputRef.current) {
+					inputRef.current.value = '';
+				}
 				setFile(null);
 				setPreview(null);
 				setValue('image', undefined);
@@ -137,20 +141,13 @@ const PatientImage = () => {
 									<Image
 										alt={getValues('name') || 'patient'}
 										className={cn(
-											'aspect-square w-full rounded-md object-cover',
-											{
-												// If preview is available show the image
-												// If preview is not available but the form has a value show the value
-												// If both are not available hide the image
-												hidden:
-													!preview && !field.value,
-											}
+											'aspect-square w-full rounded-md object-cover'
 										)}
 										height='300'
-										src={
-											// If preview is available show the preview
-											// If preview is not available but the form has a value show the value
-											// If both are not available show a placeholder
+										// If preview is available show the preview
+										// If preview is not available but the form has a value show the value
+										// If both are not available show a placeholder
+										src={`${
 											preview
 												? preview
 												: field.value
@@ -159,7 +156,7 @@ const PatientImage = () => {
 														getValues('name') ||
 															'patient'
 												  )}`
-										}
+										}`}
 										width='300'
 									/>
 									<div className='flex items-center gap-2'>
@@ -195,6 +192,7 @@ const PatientImage = () => {
 													: 'Upload'}
 											</span>
 											<Input
+												ref={inputRef}
 												type='file'
 												accept='image/*'
 												className='hidden'

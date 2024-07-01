@@ -40,20 +40,18 @@ const PatientEditForm: React.FC<Props> = ({ patient }) => {
 
 	useEffect(() => {
 		if (patient) {
-			const parsed = insertPatient.safeParse(patient);
-			if (parsed.success)
-				form.reset({
-					id: patient?.id || '',
-					name: patient?.name || '',
-					email: patient?.email || null,
-					phone: patient?.phone || '',
-					address: patient?.address || null,
-					dob: patient?.dob ? new Date(patient?.dob) : null,
-					image: patient?.image || null,
-					age: patient?.age || 0,
-				});
+			form.reset({
+				id: patient?.id || '',
+				name: patient?.name || '',
+				email: patient?.email || null,
+				phone: patient?.phone || '',
+				address: patient?.address || null,
+				dob: patient?.dob ? new Date(patient?.dob) : null,
+				image: patient?.image || null,
+				age: patient?.age || 0,
+			});
 		}
-	}, []);
+	}, [patient]);
 
 	useEffect(() => {
 		const dob = form.watch('dob');

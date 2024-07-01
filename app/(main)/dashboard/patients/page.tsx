@@ -21,6 +21,7 @@ import PatientsTable from '@/components/patients/patients-table';
 
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
+import { getPatients } from '@/lib/patients/actions';
 
 export default async function Patients() {
 	const supabase = createClient();
@@ -32,6 +33,10 @@ export default async function Patients() {
 	if (!user) {
 		return redirect('/login');
 	}
+
+	const patients = await getPatients();
+
+	console.log(patients);
 
 	return (
 		<div className='grid items-start gap-4'>

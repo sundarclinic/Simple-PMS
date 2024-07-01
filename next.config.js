@@ -1,11 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
+    dangerouslyAllowSVG: true,
+    domains: ['pzouscxbbynaghyiwovy.supabase.co', 'api.dicebear.com'],
     remotePatterns: [{
-      hostname: 'pzouscxbbynaghyiwovy.supabase.co',
+      hostname: '*.supabase.co',
       protocol: 'https',
     }, {
-      hostname: 'api.dicebear.com',
+      hostname: '*.dicebear.com',
       protocol: 'https',
     }]
   }

@@ -7,7 +7,7 @@ import {
 	InsertPatient,
 	InsertPatientToDb,
 } from '@/db/schemas/patients';
-import { DrizzleError, eq } from 'drizzle-orm';
+import { DrizzleError, eq, desc } from 'drizzle-orm';
 import { ActionResponse } from '@/lib/types';
 
 export const getPatientById = async (id: Patient['id']) => {
@@ -23,13 +23,33 @@ export const getPatientById = async (id: Patient['id']) => {
 	}
 };
 
+export const getPatients = async () => {
+	try {
+		const allPatients = await db
+			.select()
+			.from(patients)
+			.orderBy(desc(patients.createdAt));
+		return allPatients;
+	} catch (error) {
+		return [];
+	}
+};
+
 export async function addPatient(
 	data: InsertPatient
 ): Promise<ActionResponse & { id?: Patient['id'] }> {
 	try {
+		if (!data.image) {
+			data.image = `https://api.dicebear.com/9.x/fun-emoji/svg?seed=${encodeURI(
+				data.name
+			)}`;
+		}
 		const result = await db
 			.insert(patients)
-			.values({ ...data } as unknown as InsertPatientToDb)
+			.values({
+				...data,
+				...(data?.dob && { dob: data?.dob?.toISOString() }),
+			} as unknown as InsertPatientToDb)
 			.returning({ insertedId: patients.id });
 
 		if (!result[0]?.insertedId) {
@@ -43,6 +63,7 @@ export async function addPatient(
 			id: result[0].insertedId,
 		};
 	} catch (error) {
+		console.log(error);
 		if (error instanceof DrizzleError) {
 			return { message: error.message };
 		} else {
@@ -59,6 +80,7 @@ export async function editPatient(
 			.update(patients)
 			.set({
 				...data,
+				...(data?.dob && { dob: data?.dob?.toISOString() }),
 				updatedAt: new Date(),
 			} as unknown as InsertPatientToDb)
 			.where(eq(patients.id, data.id))
@@ -75,6 +97,7 @@ export async function editPatient(
 			id: result[0].insertedId,
 		};
 	} catch (error) {
+		console.log(error);
 		if (error instanceof DrizzleError) {
 			return { message: error.message };
 		} else {

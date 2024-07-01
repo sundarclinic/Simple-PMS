@@ -21,7 +21,10 @@ import { useFormContext } from 'react-hook-form';
 import { InsertPatient } from '@/db/schemas/patients';
 
 const PatientDetails = () => {
-	const { control } = useFormContext<InsertPatient>();
+	const {
+		control,
+		formState: { isSubmitting },
+	} = useFormContext<InsertPatient>();
 	return (
 		<Card>
 			<CardHeader>
@@ -35,6 +38,7 @@ const PatientDetails = () => {
 					<FormField
 						control={control}
 						name='name'
+						disabled={isSubmitting}
 						render={({ field }) => (
 							<FormItem className='grid gap-3'>
 								<FormLabel>Name</FormLabel>
@@ -51,6 +55,7 @@ const PatientDetails = () => {
 					<FormField
 						control={control}
 						name='phone'
+						disabled={isSubmitting}
 						render={({ field }) => (
 							<FormItem className='grid gap-3'>
 								<FormLabel>Phone</FormLabel>
@@ -67,6 +72,7 @@ const PatientDetails = () => {
 					<FormField
 						control={control}
 						name='address'
+						disabled={isSubmitting}
 						render={({ field }) => (
 							<FormItem className='grid gap-3'>
 								<FormLabel>Address</FormLabel>
@@ -84,6 +90,7 @@ const PatientDetails = () => {
 					<FormField
 						control={control}
 						name='email'
+						disabled={isSubmitting}
 						render={({ field }) => (
 							<FormItem className='grid gap-3'>
 								<FormLabel>Email</FormLabel>

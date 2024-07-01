@@ -15,7 +15,11 @@ import { useFormContext } from 'react-hook-form';
 import { InsertPatient } from '@/db/schemas/patients';
 
 const PatientDateOfBirth = () => {
-	const { control, register } = useFormContext<InsertPatient>();
+	const {
+		control,
+		register,
+		formState: { isSubmitting },
+	} = useFormContext<InsertPatient>();
 
 	return (
 		<Card>
@@ -27,6 +31,7 @@ const PatientDateOfBirth = () => {
 					<FormField
 						control={control}
 						name='dob'
+						disabled={isSubmitting}
 						render={({ field }) => (
 							<FormItem className='grid gap-3'>
 								<FormLabel>Date of Birth</FormLabel>
@@ -49,6 +54,7 @@ const PatientDateOfBirth = () => {
 					<FormField
 						control={control}
 						name='age'
+						disabled={isSubmitting}
 						render={({ field }) => (
 							<FormItem className='grid gap-3'>
 								<FormLabel>Age</FormLabel>

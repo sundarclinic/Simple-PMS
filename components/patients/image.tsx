@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
@@ -23,18 +23,22 @@ import { useFormContext } from 'react-hook-form';
 import { InsertPatient } from '@/db/schemas/patients';
 import { buttonVariants } from '../ui/button';
 import { cn } from '@/lib/utils';
-import { v4 as uuidv4 } from 'uuid';
 import { createClient } from '@/utils/supabase/client';
 import { toast } from 'sonner';
 
 const PatientImage = () => {
-	const { control, getValues, setValue } = useFormContext<InsertPatient>();
+	const {
+		control,
+		getValues,
+		setValue,
+		formState: { isSubmitting },
+	} = useFormContext<InsertPatient>();
 	const [file, setFile] = useState<File | null>(null);
 	const [preview, setPreview] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
-	const currentUuid = useMemo(() => uuidv4(), []);
 
 	const supabase = createClient();
+	const currentUuid = getValues('id');
 
 	const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const files = event.target.files;
@@ -93,7 +97,7 @@ const PatientImage = () => {
 	const handleClearFile = async () => {
 		if (file) {
 			setLoading(true);
-			const { data, error } = await supabase.storage
+			const { error } = await supabase.storage
 				.from('patients')
 				.remove([
 					'images/' + currentUuid + '.' + file.name.split('.').pop(),
@@ -131,7 +135,7 @@ const PatientImage = () => {
 							<FormControl>
 								<>
 									<Image
-										alt={getValues('name')}
+										alt={getValues('name') || 'patient'}
 										className={cn(
 											'aspect-square w-full rounded-md object-cover',
 											{
@@ -167,12 +171,14 @@ const PatientImage = () => {
 												'flex w-full items-center justify-center rounded-md border border-dashed gap-1 cursor-pointer',
 												{
 													'cursor-default bg-muted text-muted-foreground hover:bg-muted hover:text-muted-foreground pointer-events-none':
-														loading,
+														isSubmitting || loading,
 												}
 											)}
-											aria-disabled={loading}
+											aria-disabled={
+												isSubmitting || loading
+											}
 										>
-											{loading ? (
+											{isSubmitting || loading ? (
 												<RotateCw
 													className='text-muted-foreground animate-spin'
 													size={16}
@@ -184,9 +190,9 @@ const PatientImage = () => {
 												/>
 											)}
 											<span>
-												{loading
-													? 'Upload'
-													: 'Updating...'}
+												{isSubmitting || loading
+													? 'Updating...'
+													: 'Upload'}
 											</span>
 											<Input
 												type='file'
@@ -194,6 +200,9 @@ const PatientImage = () => {
 												className='hidden'
 												onChange={handleFileChange}
 												capture='environment'
+												disabled={
+													isSubmitting || loading
+												}
 											/>
 										</Label>
 										{file && preview ? (
@@ -203,8 +212,12 @@ const PatientImage = () => {
 												variant={'destructive'}
 												className='aspect-square shrink-0'
 												onClick={handleClearFile}
-												disabled={loading}
-												aria-disabled={loading}
+												disabled={
+													isSubmitting || loading
+												}
+												aria-disabled={
+													isSubmitting || loading
+												}
 											>
 												{loading ? (
 													<RotateCw

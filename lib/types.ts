@@ -24,6 +24,10 @@ export type FormState = {
 	issues?: string[];
 };
 
+export type ActionResponse = {
+	message: string;
+};
+
 export type PageParams = {
 	params: {};
 	searchParams?: { [key: string]: string | string[] | undefined };

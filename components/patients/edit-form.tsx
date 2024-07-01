@@ -7,6 +7,7 @@ import { ChevronLeft } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
+import { SubmitButton } from '@/components/ui/submit-button';
 
 import PatientInvoices from './invoices';
 import PatientPayments from './payments';
@@ -15,9 +16,7 @@ import PatientImage from './image';
 import DeletePatient from './delete';
 import PatientDetails from './details';
 
-import { useRouter } from 'next/navigation';
-import { useFormState } from 'react-dom';
-import { addPatient, editPatient } from '@/lib/patients/actions';
+import { editPatient } from '@/lib/patients/actions';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -29,30 +28,30 @@ interface Props
 }
 
 const PatientEditForm: React.FC<Props> = ({ patient }) => {
-	const router = useRouter();
 	const formRef = useRef<HTMLFormElement>(null);
-	const actionFuction = patient ? editPatient(patient.id) : addPatient;
-	const [state, formAction] = useFormState(actionFuction, {
-		message: '',
-	});
 	const form = useForm<InsertPatient>({
 		resolver: zodResolver(insertPatient),
-		defaultValues: {
-			name: patient?.name || '',
-			email: patient?.email || undefined,
-			phone: patient?.phone || '',
-			address: patient?.address || undefined,
-			dob: patient?.dob ? new Date(patient?.dob) : undefined,
-			image: patient?.image || undefined,
-			age: patient?.age || 0,
-			...(state?.fields ?? {}),
-		},
+		defaultValues: {},
 	});
+
+	const {
+		formState: { isSubmitting },
+	} = form;
 
 	useEffect(() => {
 		if (patient) {
 			const parsed = insertPatient.safeParse(patient);
-			if (parsed.success) form.reset(parsed.data);
+			if (parsed.success)
+				form.reset({
+					id: patient?.id || '',
+					name: patient?.name || '',
+					email: patient?.email || null,
+					phone: patient?.phone || '',
+					address: patient?.address || null,
+					dob: patient?.dob ? new Date(patient?.dob) : null,
+					image: patient?.image || null,
+					age: patient?.age || 0,
+				});
 		}
 	}, []);
 
@@ -64,37 +63,23 @@ const PatientEditForm: React.FC<Props> = ({ patient }) => {
 		}
 	}, [form.watch('dob')]);
 
-	useEffect(() => {
-		if (state?.message.length > 0 && state?.issues?.length === 0) {
-			toast.success(state.message);
-			if (!patient) {
-				router.push(`/dashboard/patients/edit/id=${state?.id}`);
+	const onSubmit = async (values: InsertPatient) => {
+		try {
+			const { message, id } = await editPatient(values);
+			if (message === 'Patient edited successfully') {
+				toast.success(message);
+			} else {
+				toast.error(message);
 			}
-		} else if (
-			state?.message.length > 0 &&
-			state?.issues &&
-			state?.issues?.length > 0
-		) {
-			toast.error(state.message, {
-				description: state.issues?.join(', '),
-			});
-		}
-	}, [state]);
-
-	const onSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
-		await form.trigger();
-		if (form.formState.isValid) {
-			formRef.current?.requestSubmit();
-		} else {
-			e.preventDefault();
+		} catch (error) {
+			toast.error('Error editing patient. Please try again.');
 		}
 	};
 
 	return (
 		<Form {...form}>
 			<form
-				onSubmit={onSubmit}
-				action={formAction}
+				onSubmit={form.handleSubmit(onSubmit)}
 				ref={formRef}
 				className='mx-auto grid max-w-[59rem] flex-1 auto-rows-max gap-4'
 			>
@@ -120,9 +105,13 @@ const PatientEditForm: React.FC<Props> = ({ patient }) => {
 						<Button variant='outline' size='sm' asChild>
 							<Link href='/dashboard/patients'>Discard</Link>
 						</Button>
-						<Button size='sm' type='submit'>
+						<SubmitButton
+							size='sm'
+							pendingText='Saving...'
+							disabled={isSubmitting}
+						>
 							Save Details
-						</Button>
+						</SubmitButton>
 					</div>
 				</div>
 				<div className='grid gap-4 md:grid-cols-[1fr_250px] lg:grid-cols-3 lg:gap-8'>
@@ -141,9 +130,13 @@ const PatientEditForm: React.FC<Props> = ({ patient }) => {
 					<Button variant='outline' size='sm'>
 						Discard
 					</Button>
-					<Button size='sm' type='submit'>
+					<SubmitButton
+						size='sm'
+						pendingText='Saving...'
+						disabled={isSubmitting}
+					>
 						Save Details
-					</Button>
+					</SubmitButton>
 				</div>
 			</form>
 		</Form>

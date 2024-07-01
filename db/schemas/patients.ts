@@ -30,6 +30,7 @@ export const insertPatient = createInsertSchema(patients)
 	})
 	.merge(
 		z.object({
+			id: z.string(),
 			name: z
 				.string()
 				.min(3, {
@@ -46,17 +47,48 @@ export const insertPatient = createInsertSchema(patients)
 				.regex(/^\d+$/, {
 					message: 'Phone number must contain only digits',
 				}),
-			email: z.string().email().optional(),
+			email: z
+				.string()
+				.email()
+				.nullable()
+				.optional()
+				.transform((v) => {
+					if (v === undefined || v === '') return null;
+					return v;
+				}),
 			age: z
 				.number()
 				.min(0, {
 					message: 'Age must be greater than 0',
 				})
 				.default(0)
+				.nullable()
 				.optional(),
-			address: z.string().optional(),
-			image: z.string().url().optional(),
-			dob: z.date().optional(),
+			address: z
+				.string()
+				.nullable()
+				.optional()
+				.transform((v) => {
+					if (v === undefined || v === '') return null;
+					return v;
+				}),
+			image: z
+				.string()
+				.url()
+				.nullable()
+				.optional()
+				.transform((v) => {
+					if (v === undefined || v === '') return null;
+					return v;
+				}),
+			dob: z
+				.date()
+				.nullable()
+				.optional()
+				.transform((v) => {
+					if (v === undefined) return null;
+					return v;
+				}),
 		})
 	);
 

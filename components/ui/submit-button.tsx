@@ -20,10 +20,10 @@ export function SubmitButton({ children, pendingText, ...props }: Props) {
 			aria-disabled={props.disabled || pending}
 			disabled={props.disabled || pending}
 		>
-			{pending ? (
+			{props.disabled || pending ? (
 				<RotateCw className='animate-spin mr-2' size={16} />
 			) : null}
-			{pending ? pendingText : children}
+			{props.disabled || pending ? pendingText : children}
 		</Button>
 	);
 }

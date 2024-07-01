@@ -26,7 +26,10 @@ export async function onSubmitLoginAction(
 
 	const supabase = createClient();
 
-	const { error } = await supabase.auth.signInWithPassword(parsed.data);
+	const { error } = await supabase.auth.signInWithPassword({
+		email: parsed.data.email,
+		password: parsed.data.password,
+	});
 
 	if (error) {
 		return {

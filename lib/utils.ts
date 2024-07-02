@@ -11,3 +11,11 @@ export const capitalize = (str: string) => {
 		.map((word) => `${word.charAt(0).toUpperCase()}${word.slice(1)}`)
 		.join(' ');
 };
+
+export const dateFormatter = (date: Date) => {
+	return new Intl.DateTimeFormat('en-IN', {
+		year: 'numeric',
+		month: 'short',
+		day: 'numeric',
+	}).format(date);
+};

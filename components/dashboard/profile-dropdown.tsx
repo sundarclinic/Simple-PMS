@@ -41,13 +41,13 @@ const ProfileDropdown = () => (
 				</Link>
 			</DropdownMenuItem>
 			<DropdownMenuItem asChild className='w-full cursor-pointer'>
-				<Link href={'/dashboard/invoices/new'}>
+				<Link href={'/dashboard/invoices/edit'}>
 					<BadgeIndianRupee className='mr-2' size={16} />
 					<span>New Invoice</span>
 				</Link>
 			</DropdownMenuItem>
 			<DropdownMenuItem asChild className='w-full cursor-pointer'>
-				<Link href='/dashboard/payments/new'>
+				<Link href='/dashboard/payments/edit'>
 					<CreditCard className='mr-2' size={16} />
 					<span>New Payment</span>
 				</Link>

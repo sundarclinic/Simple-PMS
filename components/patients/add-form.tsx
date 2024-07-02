@@ -46,7 +46,13 @@ const PatientAddForm = () => {
 
 	const onSubmit = async (values: InsertPatient) => {
 		try {
-			const { message, id } = await addPatient(values);
+			const data = values;
+			if (!data.image) {
+				data.image = `https://api.dicebear.com/9.x/fun-emoji/svg?seed=${encodeURI(
+					data.name
+				)}`;
+			}
+			const { message, id } = await addPatient(data);
 			if (message === 'Patient added successfully') {
 				toast.success(message);
 				router.push(`/dashboard/patients/edit/${id}`);

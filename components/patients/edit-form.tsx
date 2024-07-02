@@ -43,11 +43,11 @@ const PatientEditForm: React.FC<Props> = ({ patient }) => {
 			form.reset({
 				id: patient?.id || '',
 				name: patient?.name || '',
-				email: patient?.email || null,
+				email: patient?.email || undefined,
 				phone: patient?.phone || '',
-				address: patient?.address || null,
-				dob: patient?.dob ? new Date(patient?.dob) : null,
-				image: patient?.image || null,
+				address: patient?.address || undefined,
+				dob: patient?.dob ? new Date(patient?.dob) : undefined,
+				image: patient?.image || undefined,
 				age: patient?.age || 0,
 			});
 		}
@@ -63,7 +63,13 @@ const PatientEditForm: React.FC<Props> = ({ patient }) => {
 
 	const onSubmit = async (values: InsertPatient) => {
 		try {
-			const { message, id } = await editPatient(values);
+			const data = values;
+			if (!data.image) {
+				data.image = `https://api.dicebear.com/9.x/fun-emoji/svg?seed=${encodeURI(
+					data.name
+				)}`;
+			}
+			const { message } = await editPatient(data);
 			if (message === 'Patient edited successfully') {
 				toast.success(message);
 			} else {

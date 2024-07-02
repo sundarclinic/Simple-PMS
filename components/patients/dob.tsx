@@ -32,24 +32,28 @@ const PatientDateOfBirth = () => {
 						control={control}
 						name='dob'
 						disabled={isSubmitting}
-						render={({ field }) => (
-							<FormItem className='grid gap-3'>
-								<FormLabel>Date of Birth</FormLabel>
-								<FormControl>
-									<CalendarDatePicker
-										date={{ from: field.value }}
-										onDateSelect={({ from }) => {
-											field.onChange(from);
-										}}
-										variant='outline'
-										numberOfMonths={1}
-										className='justify-start'
-										yearsRange={200}
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
+						render={({ field }) => {
+							return (
+								<FormItem className='grid gap-3'>
+									<FormLabel>Date of Birth</FormLabel>
+									<FormControl>
+										<CalendarDatePicker
+											date={{
+												from: field.value,
+											}}
+											onDateSelect={({ from }) => {
+												field.onChange(from);
+											}}
+											variant='outline'
+											numberOfMonths={1}
+											className='justify-start'
+											yearsRange={160}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							);
+						}}
 					/>
 					<FormField
 						control={control}

@@ -181,7 +181,7 @@ const PatientInvoices: React.FC<Props> = ({ patient }) => {
 			</CardContent>
 			<CardFooter className='justify-center border-t p-4'>
 				<Button size='sm' variant='ghost' className='gap-1' asChild>
-					<Link href='/dashboard/invoices/new'>
+					<Link href='/dashboard/invoices/edit'>
 						<PlusCircle className='h-3.5 w-3.5' />
 						Create Invoice
 					</Link>

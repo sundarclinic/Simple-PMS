@@ -13,7 +13,7 @@ const NewPayment = async () => {
 	if (!user) {
 		return redirect('/login');
 	}
-	return <div>NewPayment</div>;
+	return <div className='grid items-start gap-4 md:gap-8'>NewPayment</div>;
 };
 
 export default NewPayment;

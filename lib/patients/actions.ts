@@ -39,16 +39,11 @@ export async function addPatient(
 	data: InsertPatient
 ): Promise<ActionResponse & { id?: Patient['id'] }> {
 	try {
-		if (!data.image) {
-			data.image = `https://api.dicebear.com/9.x/fun-emoji/svg?seed=${encodeURI(
-				data.name
-			)}`;
-		}
 		const result = await db
 			.insert(patients)
 			.values({
 				...data,
-				...(data?.dob && { dob: data?.dob?.toISOString() }),
+				...(data?.dob && { dob: data?.dob?.toDateString() }),
 			} as unknown as InsertPatientToDb)
 			.returning({ insertedId: patients.id });
 
@@ -80,7 +75,7 @@ export async function editPatient(
 			.update(patients)
 			.set({
 				...data,
-				...(data?.dob && { dob: data?.dob?.toISOString() }),
+				...(data?.dob && { dob: data?.dob?.toDateString() }),
 				updatedAt: new Date(),
 			} as unknown as InsertPatientToDb)
 			.where(eq(patients.id, data.id))

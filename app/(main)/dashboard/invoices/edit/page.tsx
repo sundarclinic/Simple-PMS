@@ -1,5 +1,7 @@
 import React from 'react';
 
+import InvoicesAddForm from '@/components/invoices/add-form';
+
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 
@@ -14,7 +16,11 @@ const NewInvoice = async () => {
 		return redirect('/login');
 	}
 
-	return <div>NewInvoice</div>;
+	return (
+		<div className='grid items-start gap-4 md:gap-8'>
+			<InvoicesAddForm />
+		</div>
+	);
 };
 
 export default NewInvoice;

@@ -6,13 +6,18 @@ import { SubmitButton } from '@/components/ui/submit-button';
 import { Badge } from '@/components/ui/badge';
 import { ChevronLeft } from 'lucide-react';
 
+import SelectPatient from './select-patient';
+import InvoiceDetails from './details';
+import InvoiceNotes from './notes';
+import InvoiceDueDate from './due-date';
+
 const InvoicesAddForm = () => {
 	return (
 		// <Form {...form}>
 		<form
 			// onSubmit={form.handleSubmit(onSubmit, console.error)}
 			// ref={formRef}
-			className='mx-auto grid max-w-[59rem] flex-1 auto-rows-max gap-4'
+			className='mx-auto w-full grid max-w-[59rem] flex-1 auto-rows-max gap-4'
 		>
 			<div className='flex items-center gap-4'>
 				<Button
@@ -47,11 +52,12 @@ const InvoicesAddForm = () => {
 			</div>
 			<div className='grid gap-4 md:grid-cols-[1fr_250px] lg:grid-cols-3 lg:gap-8'>
 				<div className='grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8'>
-					{/* <PatientDetails /> */}
+					<SelectPatient />
+					<InvoiceDetails />
+					<InvoiceNotes />
 				</div>
 				<div className='grid auto-rows-max items-start gap-4 lg:gap-8'>
-					{/* <PatientDateOfBirth />
-						<PatientImage /> */}
+					<InvoiceDueDate />
 				</div>
 			</div>
 			<div className='flex items-center justify-center gap-2 md:hidden'>

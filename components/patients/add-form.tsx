@@ -69,7 +69,7 @@ const PatientAddForm = () => {
 			<form
 				onSubmit={form.handleSubmit(onSubmit, console.error)}
 				ref={formRef}
-				className='mx-auto grid max-w-[59rem] flex-1 auto-rows-max gap-4'
+				className='mx-auto grid max-w-[59rem] flex-1 auto-rows-max gap-4 w-full'
 			>
 				<div className='flex items-center gap-4'>
 					<Button

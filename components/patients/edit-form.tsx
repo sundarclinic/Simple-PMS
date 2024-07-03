@@ -9,8 +9,8 @@ import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { SubmitButton } from '@/components/ui/submit-button';
 
-import PatientInvoices from './invoices';
-import PatientPayments from './payments';
+import PatientInvoices from '../common/invoices';
+import PatientPayments from '../common/payments';
 import PatientDateOfBirth from './dob';
 import PatientImage from './image';
 import DeletePatient from './delete';
@@ -85,7 +85,7 @@ const PatientEditForm: React.FC<Props> = ({ patient }) => {
 			<form
 				onSubmit={form.handleSubmit(onSubmit)}
 				ref={formRef}
-				className='mx-auto grid max-w-[59rem] flex-1 auto-rows-max gap-4'
+				className='mx-auto grid max-w-[59rem] flex-1 auto-rows-max gap-4 w-full'
 			>
 				<div className='flex items-center gap-4'>
 					<Button

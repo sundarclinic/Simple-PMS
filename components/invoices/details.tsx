@@ -12,20 +12,23 @@ export default function InvoiceDetails() {
 	return (
 		<Card>
 			<CardHeader>
-				<CardTitle>Product Details</CardTitle>
+				<CardTitle>Invoice Details</CardTitle>
 				<CardDescription>
-					Lipsum dolor sit amet, consectetur adipiscing elit
+					Enter the amount due and the amount paid for this invoice.
 				</CardDescription>
 			</CardHeader>
 			<CardContent>
 				<div className='grid gap-6'>
 					<div className='grid gap-3'>
-						<Label htmlFor='name'>Name</Label>
+						<Label htmlFor='amount'>Due</Label>
+						<Input id='amount' type='number' className='w-full' />
+					</div>
+					<div className='grid gap-3'>
+						<Label htmlFor='paidAmount'>Paid</Label>
 						<Input
-							id='name'
-							type='text'
+							id='paidAmount'
+							type='number'
 							className='w-full'
-							defaultValue='Gamer Gear Pro Controller'
 						/>
 					</div>
 				</div>

@@ -6,7 +6,7 @@ import { Calendar as CalendarIcon } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
+import { Calendar, CalendarProps } from '@/components/ui/calendar';
 import {
 	Popover,
 	PopoverContent,
@@ -16,9 +16,12 @@ import {
 interface Props extends React.ComponentPropsWithoutRef<typeof Popover> {
 	date: Date | undefined;
 	onSelect: (date: Date | undefined) => void;
+	calendarProps?: {
+		disabled?: CalendarProps['disabled'] | undefined;
+	};
 }
 
-export const DatePicker: React.FC<Props> = ({ date, onSelect }) => {
+export const DatePicker: React.FC<Props> = ({ date, onSelect, ...props }) => {
 	return (
 		<Popover>
 			<PopoverTrigger asChild>
@@ -39,9 +42,7 @@ export const DatePicker: React.FC<Props> = ({ date, onSelect }) => {
 					selected={date}
 					onDayClick={onSelect}
 					initialFocus
-					disabled={(date) =>
-						date > new Date() || date < new Date('1900-01-01')
-					}
+					{...props.calendarProps}
 				/>
 			</PopoverContent>
 		</Popover>

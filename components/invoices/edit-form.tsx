@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 
 import Link from 'next/link';
@@ -56,7 +58,7 @@ const InvoicesEditForm = () => {
 					<SelectPatient />
 					<InvoiceDetails />
 					<InvoiceNotes />
-					{/* <PatientPayments /> */}
+					<PatientPayments />
 				</div>
 				<div className='grid auto-rows-max items-start gap-4 lg:gap-8'>
 					<InvoiceDueDate />

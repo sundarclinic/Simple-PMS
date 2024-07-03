@@ -12,15 +12,15 @@ export default function InvoiceNotes() {
 	return (
 		<Card>
 			<CardHeader>
-				<CardTitle>Product Details</CardTitle>
+				<CardTitle>Invoice Notes</CardTitle>
 				<CardDescription>
-					Lipsum dolor sit amet, consectetur adipiscing elit
+					Add any notes or additional information about this invoice.
 				</CardDescription>
 			</CardHeader>
 			<CardContent>
 				<div className='grid gap-6'>
 					<div className='grid gap-3'>
-						<Label htmlFor='description'>Description</Label>
+						<Label htmlFor='description'>Notes</Label>
 						<Textarea
 							id='description'
 							defaultValue='Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl nec ultricies ultricies, nunc nisl ultricies nunc, nec ultricies nunc nisl nec nunc.'

@@ -4,8 +4,12 @@ import InvoicesEditForm from '@/components/invoices/edit-form';
 
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
+import { getInvoiceById } from '@/lib/invoices/actions';
+import { PageParams } from '@/lib/types';
 
-const EditInvoice = async () => {
+type EditPageParams = PageParams & { params: { id: string } };
+
+const EditInvoice = async ({ params }: EditPageParams) => {
 	const supabase = createClient();
 
 	const {
@@ -16,9 +20,15 @@ const EditInvoice = async () => {
 		return redirect('/login');
 	}
 
+	if (!params.id) {
+		return redirect('/dashboard/invoices');
+	}
+
+	const invoice = await getInvoiceById(params?.id);
+
 	return (
 		<div className='grid items-start gap-4 md:gap-8'>
-			<InvoicesEditForm />
+			<InvoicesEditForm invoice={invoice} />
 		</div>
 	);
 };

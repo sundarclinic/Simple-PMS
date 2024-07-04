@@ -13,33 +13,36 @@ import { RotateCw } from 'lucide-react';
 import { useFormContext } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { Patient, InsertPatient } from '@/db/schemas/patients';
-import { deletePatient } from '@/lib/patients/actions';
+import { InsertInvoice, Invoice } from '@/db/schemas/invoices';
+import { deleteInvoice } from '@/lib/invoices/actions';
+import { Patient } from '@/db/schemas/patients';
 
 interface Props
 	extends React.HTMLAttributes<React.ComponentPropsWithoutRef<typeof Card>> {
-	patient: Patient | null;
+	invoice: { invoice: Invoice; patient: Patient } | null;
 }
 
-const DeletePatient: React.FC<Props> = ({ patient }) => {
+const DeleteInvoice: React.FC<Props> = ({ invoice }) => {
 	const router = useRouter();
 	const {
 		formState: { isSubmitting },
-	} = useFormContext<InsertPatient>();
+	} = useFormContext<InsertInvoice>();
 	const [loading, setLoading] = useState(false);
 
 	const handleDelete = async () => {
 		try {
 			setLoading(true);
-			const { message } = await deletePatient(patient?.id as string);
-			if (message === 'Patient deleted successfully') {
+			const { message } = await deleteInvoice(
+				invoice?.invoice.id as string
+			);
+			if (message === 'Invoice deleted successfully') {
 				toast.success(message);
-				router.push('/dashboard/patients');
+				router.push('/dashboard/invoices');
 			} else {
 				toast.error(message);
 			}
 		} catch (error) {
-			toast.error('Error deleting patient. Please try again.');
+			toast.error('Error deleting invoice. Please try again.');
 		} finally {
 			setLoading(false);
 		}
@@ -48,9 +51,9 @@ const DeletePatient: React.FC<Props> = ({ patient }) => {
 	return (
 		<Card>
 			<CardHeader>
-				<CardTitle>Delete Patient</CardTitle>
+				<CardTitle>Delete Invoice</CardTitle>
 				<CardDescription>
-					Deleting a patient will remove all associated data.
+					Deleting a invoice will remove all associated data.
 				</CardDescription>
 			</CardHeader>
 			<CardContent>
@@ -71,4 +74,4 @@ const DeletePatient: React.FC<Props> = ({ patient }) => {
 	);
 };
 
-export default DeletePatient;
+export default DeleteInvoice;

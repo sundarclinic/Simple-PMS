@@ -20,6 +20,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { insertInvoice, InsertInvoice } from '@/db/schemas/invoices';
 import { v4 as uuid } from 'uuid';
+import { addInvoice } from '@/lib/invoices/actions';
 
 const InvoicesAddForm = () => {
 	const router = useRouter();
@@ -43,15 +44,13 @@ const InvoicesAddForm = () => {
 
 	const onSubmit = async (values: InsertInvoice) => {
 		try {
-			console.log(values);
-			// const { message, id } = await addPatient(data);
-			// if (message === 'Patient added successfully') {
-			// 	toast.success(message);
-			// 	router.push(`/dashboard/patients/edit/${id}`);
-			// } else {
-			// 	toast.error(message);
-			// }
-			toast(JSON.stringify(values, null, 2));
+			const { message, id } = await addInvoice(values);
+			if (message === 'Invoice added successfully') {
+				toast.success(message);
+				router.push(`/dashboard/invoices/edit/${id}`);
+			} else {
+				toast.error(message);
+			}
 		} catch (error) {
 			toast.error('Error adding invoice. Please try again.');
 		}
@@ -60,7 +59,7 @@ const InvoicesAddForm = () => {
 	return (
 		<Form {...form}>
 			<form
-				onSubmit={form.handleSubmit(onSubmit, console.error)}
+				onSubmit={form.handleSubmit(onSubmit)}
 				className='mx-auto w-full grid max-w-[59rem] flex-1 auto-rows-max gap-4'
 			>
 				<div className='flex items-center gap-4'>

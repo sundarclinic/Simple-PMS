@@ -22,8 +22,8 @@ const DashboardBreadcrumb = () => {
 		<Breadcrumb className='hidden md:flex'>
 			<BreadcrumbList>
 				{segments.map((segment, index) => (
-					<>
-						<BreadcrumbItem key={`${segment}-item`}>
+					<React.Fragment key={`${segment}-item-${index}`}>
+						<BreadcrumbItem>
 							<BreadcrumbLink
 								asChild
 								className={
@@ -49,9 +49,9 @@ const DashboardBreadcrumb = () => {
 							</BreadcrumbLink>
 						</BreadcrumbItem>
 						{index !== segments.length - 1 ? (
-							<BreadcrumbSeparator key={`${segment}-separator`} />
+							<BreadcrumbSeparator />
 						) : null}
-					</>
+					</React.Fragment>
 				))}
 			</BreadcrumbList>
 		</Breadcrumb>

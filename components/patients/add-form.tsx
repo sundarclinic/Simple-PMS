@@ -66,7 +66,7 @@ const PatientAddForm = () => {
 	return (
 		<Form {...form}>
 			<form
-				onSubmit={form.handleSubmit(onSubmit, console.error)}
+				onSubmit={form.handleSubmit(onSubmit)}
 				className='mx-auto grid max-w-[59rem] flex-1 auto-rows-max gap-4 w-full'
 			>
 				<div className='flex items-center gap-4'>

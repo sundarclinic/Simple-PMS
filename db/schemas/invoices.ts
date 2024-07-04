@@ -15,7 +15,7 @@ export const invoices = pgTable('invoices', {
 	id: uuid('id').primaryKey(),
 	patientId: uuid('patient_id')
 		.notNull()
-		.references((): AnyPgColumn => patients.id),
+		.references((): AnyPgColumn => patients.id, { onDelete: 'cascade' }),
 	amount: integer('amount').notNull(),
 	paidAmount: integer('paid_amount').notNull().default(0),
 	dueDate: date('due_date').notNull(),

@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -33,8 +33,14 @@ import { useDebounce } from '@/hooks/use-debounce';
 import { getPatientsByName } from '@/lib/patients/actions';
 import { Patient } from '@/db/schemas/patients';
 import { cn } from '@/lib/utils';
+import { Invoice } from '@/lib/types';
 
-export default function SelectPatient() {
+interface Props
+	extends React.HTMLAttributes<React.ComponentPropsWithoutRef<typeof Card>> {
+	invoice?: { invoice: Invoice; patient: Patient } | null;
+}
+
+const SelectPatient: React.FC<Props> = ({ invoice }) => {
 	const [open, setOpen] = useState(false);
 	const isDesktop = useMediaQuery('(min-width: 768px)');
 	const [selectedPatient, setSelectedPatient] = useState<Patient | null>(
@@ -44,6 +50,12 @@ export default function SelectPatient() {
 		control,
 		formState: { isSubmitting },
 	} = useFormContext<InsertInvoice>();
+
+	useEffect(() => {
+		if (invoice) {
+			setSelectedPatient(invoice.patient);
+		}
+	}, [invoice]);
 
 	return (
 		<Card>
@@ -149,7 +161,9 @@ export default function SelectPatient() {
 			</CardContent>
 		</Card>
 	);
-}
+};
+
+export default SelectPatient;
 
 function TriggerButtonContent({ patient }: { patient: Patient | null }) {
 	return patient ? (

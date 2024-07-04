@@ -30,7 +30,7 @@ export const insertPatient = createInsertSchema(patients)
 	})
 	.merge(
 		z.object({
-			id: z.string(),
+			id: z.string().uuid(),
 			name: z
 				.string()
 				.min(3, {

@@ -57,11 +57,11 @@ const InvoicesEditForm = () => {
 				<div className='grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8'>
 					<SelectPatient />
 					<InvoiceDetails />
-					<InvoiceNotes />
 					<PatientPayments />
 				</div>
 				<div className='grid auto-rows-max items-start gap-4 lg:gap-8'>
 					<InvoiceDueDate />
+					<InvoiceNotes />
 				</div>
 			</div>
 			<div className='flex items-center justify-center gap-2 md:hidden'>

@@ -5,10 +5,23 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import {
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from '@/components/ui/form';
+
+import { useFormContext } from 'react-hook-form';
+import { InsertInvoice } from '@/db/schemas/invoices';
 
 export default function InvoiceNotes() {
+	const {
+		control,
+		formState: { isSubmitting },
+	} = useFormContext<InsertInvoice>();
 	return (
 		<Card>
 			<CardHeader>
@@ -19,14 +32,24 @@ export default function InvoiceNotes() {
 			</CardHeader>
 			<CardContent>
 				<div className='grid gap-6'>
-					<div className='grid gap-3'>
-						<Label htmlFor='description'>Notes</Label>
-						<Textarea
-							id='description'
-							defaultValue='Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl nec ultricies ultricies, nunc nisl ultricies nunc, nec ultricies nunc nisl nec nunc.'
-							className='min-h-32'
-						/>
-					</div>
+					<FormField
+						control={control}
+						name='notes'
+						disabled={isSubmitting}
+						render={({ field }) => (
+							<FormItem className='grid gap-3'>
+								<FormLabel>Notes</FormLabel>
+								<FormControl>
+									<Textarea
+										{...field}
+										className='min-h-32'
+										placeholder='Add notes here'
+									/>
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
 				</div>
 			</CardContent>
 		</Card>

@@ -32,12 +32,31 @@ export const insertInvoice = createInsertSchema(invoices)
 	})
 	.merge(
 		z.object({
-			id: z.string(),
-			patientId: z.string(),
+			id: z.string().uuid(),
+			patientId: z
+				.string({
+					message:
+						'Patient is required to be associated with the invoice.',
+				})
+				.uuid(),
 			amount: z.number().min(1),
 			paidAmount: z.number().min(0).default(0),
-			dueDate: z.string(),
-			notes: z.string().nullable().optional(),
+			dueDate: z
+				.date()
+				.nullable()
+				.optional()
+				.transform((v) => {
+					if (v === undefined) return null;
+					return v;
+				}),
+			notes: z
+				.string()
+				.nullable()
+				.optional()
+				.transform((v) => {
+					if (v === undefined || v === '') return null;
+					return v;
+				}),
 		})
 	);
 

@@ -7,7 +7,7 @@ import {
 	InsertPatient,
 	InsertPatientToDb,
 } from '@/db/schemas/patients';
-import { DrizzleError, eq, desc } from 'drizzle-orm';
+import { DrizzleError, eq, desc, ilike, or } from 'drizzle-orm';
 import { ActionResponse } from '@/lib/types';
 
 export const getPatientById = async (id: Patient['id']) => {
@@ -30,6 +30,25 @@ export const getPatients = async () => {
 			.from(patients)
 			.orderBy(desc(patients.createdAt));
 		return allPatients;
+	} catch (error) {
+		return [];
+	}
+};
+
+export const getPatientsByName = async (name: Patient['name']) => {
+	try {
+		if (!name) return [];
+		const results = await db
+			.select()
+			.from(patients)
+			.where(
+				or(
+					ilike(patients.name, `%${name}%`),
+					ilike(patients.phone, `%${name}%`)
+				)
+			);
+		if (results.length === 0) return null;
+		return results;
 	} catch (error) {
 		return [];
 	}

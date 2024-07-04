@@ -23,7 +23,6 @@ import { v4 as uuid } from 'uuid';
 
 const PatientAddForm = () => {
 	const router = useRouter();
-	const formRef = useRef<HTMLFormElement>(null);
 
 	const form = useForm<InsertPatient>({
 		resolver: zodResolver(insertPatient),
@@ -68,7 +67,6 @@ const PatientAddForm = () => {
 		<Form {...form}>
 			<form
 				onSubmit={form.handleSubmit(onSubmit, console.error)}
-				ref={formRef}
 				className='mx-auto grid max-w-[59rem] flex-1 auto-rows-max gap-4 w-full'
 			>
 				<div className='flex items-center gap-4'>

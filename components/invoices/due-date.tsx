@@ -1,11 +1,23 @@
 import { useState } from 'react';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
 import { DatePicker } from '@/components/ui/date-picker';
+import {
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from '@/components/ui/form';
+
+import { useFormContext } from 'react-hook-form';
+import { InsertInvoice } from '@/db/schemas/invoices';
 
 export default function InvoiceDueDate() {
-	const [dueDate, setDueDate] = useState<Date>();
+	const {
+		control,
+		formState: { isSubmitting },
+	} = useFormContext<InsertInvoice>();
 	return (
 		<Card>
 			<CardHeader>
@@ -13,16 +25,35 @@ export default function InvoiceDueDate() {
 			</CardHeader>
 			<CardContent>
 				<div className='grid gap-6'>
-					<div className='grid gap-3'>
-						<Label htmlFor='dueDate'>Date</Label>
-						<DatePicker
-							date={dueDate}
-							onSelect={setDueDate}
-							calendarProps={{
-								disabled: (date) => date < new Date(),
-							}}
-						/>
-					</div>
+					<FormField
+						control={control}
+						name='dueDate'
+						disabled={isSubmitting}
+						render={({
+							field: { value, onChange, ...fieldProps },
+						}) => (
+							<FormItem className='grid gap-3'>
+								<FormLabel>Date</FormLabel>
+								<FormControl>
+									<DatePicker
+										{...fieldProps}
+										date={value}
+										onSelect={onChange}
+										calendarProps={{
+											disabled: (date) =>
+												date <
+												new Date(
+													new Date().setDate(
+														new Date().getDate() - 1
+													)
+												),
+										}}
+									/>
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
 				</div>
 			</CardContent>
 		</Card>

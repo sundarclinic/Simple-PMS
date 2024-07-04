@@ -28,7 +28,6 @@ interface Props
 }
 
 const PatientEditForm: React.FC<Props> = ({ patient }) => {
-	const formRef = useRef<HTMLFormElement>(null);
 	const form = useForm<InsertPatient>({
 		resolver: zodResolver(insertPatient),
 		defaultValues: {},
@@ -84,7 +83,6 @@ const PatientEditForm: React.FC<Props> = ({ patient }) => {
 		<Form {...form}>
 			<form
 				onSubmit={form.handleSubmit(onSubmit)}
-				ref={formRef}
 				className='mx-auto grid max-w-[59rem] flex-1 auto-rows-max gap-4 w-full'
 			>
 				<div className='flex items-center gap-4'>

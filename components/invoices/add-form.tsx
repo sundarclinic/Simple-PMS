@@ -51,6 +51,7 @@ const InvoicesAddForm = () => {
 			// } else {
 			// 	toast.error(message);
 			// }
+			toast(JSON.stringify(values, null, 2));
 		} catch (error) {
 			toast.error('Error adding invoice. Please try again.');
 		}

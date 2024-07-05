@@ -13,7 +13,7 @@ import InsightCard from '@/components/dashboard/insight-card';
 
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
-import { getDashboardInsights } from '@/lib/invoices/actions';
+import { getDashboardInsights } from '@/lib/dashboard/actions';
 
 export default async function Dashboard() {
 	const supabase = createClient();

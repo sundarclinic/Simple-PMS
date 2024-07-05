@@ -39,10 +39,10 @@ const PatientInvoices: React.FC<Props> = () => {
 				<Table>
 					<TableHeader>
 						<TableRow>
-							<TableHead className='w-[100px]'>SKU</TableHead>
+							<TableHead>SKU</TableHead>
 							<TableHead>Stock</TableHead>
 							<TableHead>Price</TableHead>
-							<TableHead className='w-[100px]'>Size</TableHead>
+							<TableHead>Size</TableHead>
 						</TableRow>
 					</TableHeader>
 					<TableBody>

@@ -19,6 +19,7 @@ export const getPatientById = async (id: Patient['id']) => {
 		if (patient.length === 0) return null;
 		return patient[0];
 	} catch (error) {
+		console.log(error);
 		return null;
 	}
 };
@@ -31,6 +32,7 @@ export const getPatients = async () => {
 			.orderBy(desc(patients.createdAt));
 		return allPatients;
 	} catch (error) {
+		console.log(error);
 		return [];
 	}
 };
@@ -50,6 +52,7 @@ export const getPatientsByName = async (name: Patient['name']) => {
 		if (results.length === 0) return null;
 		return results;
 	} catch (error) {
+		console.log(error);
 		return [];
 	}
 };
@@ -65,7 +68,6 @@ export async function addPatient(
 				...(data?.dob && { dob: data?.dob?.toDateString() }),
 			} as unknown as InsertPatientToDb)
 			.returning({ insertedId: patients.id });
-
 		if (!result[0]?.insertedId) {
 			return {
 				message: 'Error adding patient',
@@ -99,7 +101,6 @@ export async function editPatient(
 			} as unknown as InsertPatientToDb)
 			.where(eq(patients.id, data.id))
 			.returning({ insertedId: patients.id });
-
 		if (!result[0]?.insertedId) {
 			return {
 				message: 'Error editing patient',
@@ -128,7 +129,6 @@ export async function deletePatient(
 			.delete(patients)
 			.where(eq(patients.id, id))
 			.returning({ id: patients.id });
-
 		if (result.length === 0) {
 			return {
 				message: 'Error deleting patient',

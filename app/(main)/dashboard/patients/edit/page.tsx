@@ -4,9 +4,8 @@ import PatientAddForm from '@/components/patients/add-form';
 
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
-import { PageParams } from '@/lib/types';
 
-const IndividualPatient = async ({ searchParams }: PageParams) => {
+const IndividualPatient = async () => {
 	const supabase = createClient();
 
 	const {

@@ -26,6 +26,10 @@ const IndividualPatient = async ({ params }: EditPageParams) => {
 
 	const patient = await getPatientById(params?.id);
 
+	if (!patient) {
+		return redirect('/dashboard/patients');
+	}
+
 	return (
 		<div className='grid items-start gap-4 md:gap-8'>
 			<PatientEditForm patient={patient} />

@@ -39,14 +39,9 @@ export const insertPatient = createInsertSchema(patients)
 				.max(255, {
 					message: 'Name must be at most 255 characters',
 				}),
-			phone: z
-				.string()
-				.length(10, {
-					message: 'Phone number must be 10 digits',
-				})
-				.regex(/^\d+$/, {
-					message: 'Phone number must contain only digits',
-				}),
+			phone: z.string().regex(/^\+[1-9]\d{1,14}$/, {
+				message: 'Phone number must be in proper format',
+			}),
 			email: z
 				.string()
 				.email()

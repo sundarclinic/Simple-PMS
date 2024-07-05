@@ -15,6 +15,7 @@ import {
 	FormItem,
 	FormLabel,
 	FormMessage,
+	FormDescription,
 } from '@/components/ui/form';
 
 import { useFormContext } from 'react-hook-form';
@@ -57,8 +58,12 @@ const PatientDetails = () => {
 						name='phone'
 						disabled={isSubmitting}
 						render={({ field }) => (
-							<FormItem className='grid gap-3'>
+							<FormItem className='grid'>
 								<FormLabel>Phone</FormLabel>
+								<FormDescription>
+									Include country code (e.g. +91) before the
+									number.
+								</FormDescription>
 								<FormControl>
 									<Input
 										placeholder='9876543210'

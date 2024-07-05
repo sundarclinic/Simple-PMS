@@ -121,11 +121,14 @@ const columns: ColumnDef<Patient>[] = [
 					<DropdownMenuContent align='end'>
 						<DropdownMenuLabel>Actions</DropdownMenuLabel>
 						<DropdownMenuItem asChild className='cursor-pointer'>
+							<Link href={`/dashboard/patients/${id}`}>View</Link>
+						</DropdownMenuItem>
+						<DropdownMenuItem asChild className='cursor-pointer'>
 							<Link href={`/dashboard/patients/edit/${id}`}>
 								Edit
 							</Link>
 						</DropdownMenuItem>
-						{/* <DropdownMenuItem>Delete</DropdownMenuItem> */}
+						<DropdownMenuItem>Delete</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>
 			);

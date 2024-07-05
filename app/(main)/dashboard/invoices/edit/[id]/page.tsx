@@ -26,6 +26,10 @@ const EditInvoice = async ({ params }: EditPageParams) => {
 
 	const invoice = await getInvoiceById(params?.id);
 
+	if (!invoice) {
+		return redirect('/dashboard/invoices');
+	}
+
 	return (
 		<div className='grid items-start gap-4 md:gap-8'>
 			<InvoicesEditForm invoice={invoice} />

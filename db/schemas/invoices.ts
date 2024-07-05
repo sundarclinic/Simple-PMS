@@ -20,15 +20,15 @@ export const invoices = pgTable('invoices', {
 	paidAmount: integer('paid_amount').notNull().default(0),
 	dueDate: date('due_date').notNull(),
 	notes: text('notes'),
-	created_at: timestamp('created_at').defaultNow().notNull(),
-	updated_at: timestamp('updated_at').defaultNow().notNull(),
+	createdAt: timestamp('created_at').defaultNow().notNull(),
+	updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
 export const insertInvoice = createInsertSchema(invoices)
 	.omit({
 		id: true,
-		created_at: true,
-		updated_at: true,
+		createdAt: true,
+		updatedAt: true,
 	})
 	.merge(
 		z.object({

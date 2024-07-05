@@ -2,7 +2,6 @@
 const nextConfig = {
   images: {
     dangerouslyAllowSVG: true,
-    domains: ['pzouscxbbynaghyiwovy.supabase.co', 'api.dicebear.com'],
     remotePatterns: [{
       hostname: '*.supabase.co',
       protocol: 'https',

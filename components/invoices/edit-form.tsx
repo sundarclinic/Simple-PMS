@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -20,7 +20,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { insertInvoice, InsertInvoice, Invoice } from '@/db/schemas/invoices';
-import { v4 as uuid } from 'uuid';
 import { editInvoice } from '@/lib/invoices/actions';
 import { Patient } from '@/db/schemas/patients';
 
@@ -32,23 +31,26 @@ interface Props
 const InvoicesEditForm: React.FC<Props> = ({ invoice }) => {
 	const form = useForm<InsertInvoice>({
 		resolver: zodResolver(insertInvoice),
-		defaultValues: async () => {
-			const id = uuid();
+		defaultValues: useMemo(() => {
+			if (!invoice.invoice) return {};
 			return {
-				id,
-				amount: 0,
-				paidAmount: 0,
-				dueDate: new Date(),
-				patientId: null,
+				id: invoice?.invoice.id || '',
+				amount: invoice?.invoice.amount || 0,
+				paidAmount: invoice?.invoice.paidAmount || 0,
+				dueDate: invoice?.invoice.dueDate
+					? new Date(invoice?.invoice.dueDate)
+					: new Date(),
+				patientId: invoice?.invoice.patientId || undefined,
+				notes: invoice?.invoice.notes || undefined,
 			};
-		},
+		}, [invoice]),
 	});
 	const {
 		formState: { isSubmitting },
 	} = form;
 
 	useEffect(() => {
-		if (invoice) {
+		if (invoice.invoice) {
 			form.reset({
 				id: invoice?.invoice.id || '',
 				amount: invoice?.invoice.amount || 0,
@@ -56,8 +58,8 @@ const InvoicesEditForm: React.FC<Props> = ({ invoice }) => {
 				dueDate: invoice?.invoice.dueDate
 					? new Date(invoice?.invoice.dueDate)
 					: new Date(),
-				patientId: invoice?.invoice.patientId || null,
-				notes: invoice?.invoice.notes || null,
+				patientId: invoice?.invoice.patientId || undefined,
+				notes: invoice?.invoice.notes || undefined,
 			});
 		}
 	}, [invoice]);
@@ -88,7 +90,7 @@ const InvoicesEditForm: React.FC<Props> = ({ invoice }) => {
 						className='h-7 w-7'
 						asChild
 					>
-						<Link href={'/dashboard/patients'}>
+						<Link href={'/dashboard/invoices'}>
 							<ChevronLeft className='h-4 w-4' />
 							<span className='sr-only'>Back</span>
 						</Link>
@@ -101,7 +103,7 @@ const InvoicesEditForm: React.FC<Props> = ({ invoice }) => {
 					</Badge>
 					<div className='hidden items-center gap-2 md:ml-auto md:flex'>
 						<Button variant='outline' size='sm' asChild>
-							<Link href='/dashboard/patients'>Discard</Link>
+							<Link href='/dashboard/invoices'>Discard</Link>
 						</Button>
 						<SubmitButton
 							size='sm'

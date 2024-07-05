@@ -9,9 +9,11 @@ import {
 import { Progress } from '@/components/ui/progress';
 import InvoicesTable from '@/components/dashboard/invoices-table';
 import RecentInvoice from '@/components/dashboard/recent-invoice';
+import InsightCard from '@/components/dashboard/insight-card';
 
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
+import { getDashboardInsights } from '@/lib/invoices/actions';
 
 export default async function Dashboard() {
 	const supabase = createClient();
@@ -24,42 +26,22 @@ export default async function Dashboard() {
 		return redirect('/login');
 	}
 
+	const insights = await getDashboardInsights();
+
 	return (
 		<div className='grid items-start gap-4 md:gap-8 lg:grid-cols-3'>
 			<div className='lg:col-span-2 w-full flex flex-col gap-4 md:gap-8'>
 				<section className='grid grid-cols-[repeat(auto-fill,minmax(15rem,1fr))] gap-4 md:gap-8'>
-					<Card className='flex flex-col'>
-						<CardHeader className='pb-2'>
-							<CardDescription>
-								Total Outstanding Dues
-							</CardDescription>
-							<CardTitle className='text-4xl'>₹ 1,329</CardTitle>
-						</CardHeader>
-						<CardContent>
-							<div className='text-xs text-muted-foreground'>
-								+25% from last week
-							</div>
-						</CardContent>
-						<CardFooter className='mt-auto'>
-							<Progress value={25} aria-label='25% increase' />
-						</CardFooter>
-					</Card>
-					<Card className='flex flex-col'>
-						<CardHeader className='pb-2'>
-							<CardDescription>
-								Total Overdue Invoices
-							</CardDescription>
-							<CardTitle className='text-4xl'>20</CardTitle>
-						</CardHeader>
-						<CardContent>
-							<div className='text-xs text-muted-foreground'>
-								+5% from last week
-							</div>
-						</CardContent>
-						<CardFooter className='mt-auto'>
-							<Progress value={5} aria-label='25% increase' />
-						</CardFooter>
-					</Card>
+					<InsightCard
+						label='Total Outstanding Dues'
+						value={`₹ ${insights.outstandingDues}`}
+						percentage={insights.weekDifference.outstandingDues}
+					/>
+					<InsightCard
+						label='Total Overdue Invoices'
+						value={insights.overdueInvoices}
+						percentage={insights.weekDifference.overdueInvoices}
+					/>
 					<Card className='flex flex-col'>
 						<CardHeader className='pb-2'>
 							<CardDescription>

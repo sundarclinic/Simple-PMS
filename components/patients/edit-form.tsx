@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
@@ -30,7 +30,19 @@ interface Props
 const PatientEditForm: React.FC<Props> = ({ patient }) => {
 	const form = useForm<InsertPatient>({
 		resolver: zodResolver(insertPatient),
-		defaultValues: {},
+		defaultValues: useMemo(() => {
+			if (!patient) return {};
+			return {
+				id: patient?.id || '',
+				name: patient?.name || '',
+				email: patient?.email || undefined,
+				phone: patient?.phone || '',
+				address: patient?.address || undefined,
+				dob: patient?.dob ? new Date(patient?.dob) : undefined,
+				image: patient?.image || undefined,
+				age: patient?.age || 0,
+			};
+		}, [patient]),
 	});
 
 	const {

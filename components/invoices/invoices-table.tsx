@@ -3,7 +3,6 @@
 import React from 'react';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { MoreHorizontal } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -31,81 +30,85 @@ import {
 	getPaginationRowModel,
 } from '@tanstack/react-table';
 import { Patient } from '@/db/schemas/patients';
-import { dateFormatter } from '@/lib/utils';
+import { capitalize, dateFormatter } from '@/lib/utils';
+import { Invoice } from '@/db/schemas/invoices';
+import { cn } from '@/lib/utils';
+
+type InvoicesTableProps = Invoice & { patient: Patient };
 
 interface Props
 	extends React.HTMLAttributes<React.ComponentPropsWithoutRef<typeof Table>> {
-	patients: Patient[];
+	invoices: InvoicesTableProps[];
 }
 
-const columns: ColumnDef<Patient>[] = [
+const columns: ColumnDef<InvoicesTableProps>[] = [
 	{
-		accessorKey: 'image',
-		header: () => (
-			<div className='hidden sm:table-cell'>
-				<span className='sr-only'>Image</span>
-			</div>
-		),
-		cell: ({ row }) => {
-			const { image } = row.original;
-			return image ? (
-				<Image
-					alt={row.getValue('name')}
-					className='aspect-square rounded-md object-cover'
-					height='64'
-					src={image}
-					width='64'
-					unoptimized
-				/>
-			) : null;
-		},
-	},
-	{
-		accessorKey: 'name',
+		accessorKey: 'patient.name',
 		header: 'Name',
 	},
 	{
-		accessorKey: 'phone',
+		accessorKey: 'patient.phone',
 		header: 'Phone',
 	},
 	{
-		accessorKey: 'age',
-		header: () => <div className='hidden sm:table-cell'>Age</div>,
+		accessorKey: 'createdAt',
+		header: () => <div className='hidden sm:table-cell'>Created At</div>,
 		cell: ({ row }) => {
-			const { age } = row.original;
-			return <div className='hidden sm:table-cell'>{age}</div>;
-		},
-	},
-	{
-		accessorKey: 'dob',
-		header: () => <div className='hidden sm:table-cell'>Date of Birth</div>,
-		cell: ({ row }) => {
-			const { dob } = row.original;
+			const { createdAt } = row.original;
 			return (
 				<div className='hidden sm:table-cell'>
-					{dob ? dateFormatter(new Date(dob)) : null}
+					{createdAt ? dateFormatter(new Date(createdAt)) : null}
 				</div>
 			);
 		},
 	},
 	{
-		accessorKey: 'address',
-		header: () => (
-			<div className='hidden max-w-[12rem] sm:table-cell'>Address</div>
-		),
+		accessorKey: 'dueDate',
+		header: 'Due Date',
 		cell: ({ row }) => {
-			const { address } = row.original;
+			const { dueDate } = row.original;
+			return dueDate ? dateFormatter(new Date(dueDate)) : null;
+		},
+	},
+	{
+		accessorKey: 'amount',
+		header: 'Amount',
+	},
+	{
+		accessorKey: 'paidAmount',
+		header: 'Paid Amount',
+	},
+	{
+		accessorKey: 'status',
+		header: 'Status',
+		cell: ({ row }) => {
+			const { amount, paidAmount } = row.original;
+			const status =
+				paidAmount === 0
+					? 'unpaid'
+					: paidAmount >= amount
+					? 'paid'
+					: 'partially-paid';
 			return (
-				<div className='max-w-[12rem] hidden sm:table-cell'>
-					{address}
-				</div>
+				<Badge
+					variant='outline'
+					className={cn({
+						'bg-primary text-primary-foreground':
+							status === 'unpaid',
+						'bg-success text-success-foreground': status === 'paid',
+						'bg-warning text-warning-foreground':
+							status === 'partially-paid',
+					})}
+				>
+					{capitalize(status)}
+				</Badge>
 			);
 		},
 	},
 	{
 		id: 'actions',
 		cell: ({ row }) => {
-			const { id } = row.original;
+			const { id, patientId } = row.original;
 			return (
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
@@ -121,8 +124,20 @@ const columns: ColumnDef<Patient>[] = [
 					<DropdownMenuContent align='end'>
 						<DropdownMenuLabel>Actions</DropdownMenuLabel>
 						<DropdownMenuItem asChild className='cursor-pointer'>
-							<Link href={`/dashboard/patients/edit/${id}`}>
+							<Link href={`/dashboard/invoices/edit/${id}`}>
 								Edit
+							</Link>
+						</DropdownMenuItem>
+						<DropdownMenuItem asChild className='cursor-pointer'>
+							<Link href={`/dashboard/payments/edit`}>
+								Add Payment
+							</Link>
+						</DropdownMenuItem>
+						<DropdownMenuItem asChild className='cursor-pointer'>
+							<Link
+								href={`/dashboard/patients/edit/${patientId}`}
+							>
+								View Patient
 							</Link>
 						</DropdownMenuItem>
 						{/* <DropdownMenuItem>Delete</DropdownMenuItem> */}
@@ -133,9 +148,9 @@ const columns: ColumnDef<Patient>[] = [
 	},
 ];
 
-const PatientsTable: React.FC<Props> = ({ patients }) => {
+const InvoicesTable: React.FC<Props> = ({ invoices }) => {
 	const table = useReactTable({
-		data: patients,
+		data: invoices,
 		columns,
 		getCoreRowModel: getCoreRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
@@ -214,4 +229,4 @@ const PatientsTable: React.FC<Props> = ({ patients }) => {
 	);
 };
 
-export default PatientsTable;
+export default InvoicesTable;

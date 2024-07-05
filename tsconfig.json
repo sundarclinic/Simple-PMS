@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
-		"target": "es5",
-		// "target": "ESNext", // temporary override when using drizzle-kit
+		// "target": "es5",
+		"target": "ESNext", // temporary override when using drizzle-kit
 		"lib": ["dom", "dom.iterable", "esnext"],
 		"allowJs": true,
 		"skipLibCheck": true,

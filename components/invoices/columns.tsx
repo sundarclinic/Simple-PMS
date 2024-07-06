@@ -18,6 +18,7 @@ import { capitalize, dateFormatter } from '@/lib/utils';
 import { Invoice } from '@/db/schemas/invoices';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
+import { getInvoiceStatus } from '@/lib/invoices/utils';
 
 export type InvoicesTableProps = Invoice & { patient: Patient };
 
@@ -62,13 +63,7 @@ export const invoiceColumns: ColumnDef<InvoicesTableProps>[] = [
 		accessorKey: 'status',
 		header: 'Status',
 		cell: ({ row }) => {
-			const { amount, paidAmount } = row.original;
-			const status =
-				paidAmount === 0
-					? 'unpaid'
-					: paidAmount >= amount
-					? 'paid'
-					: 'partially-paid';
+			const status = getInvoiceStatus(row.original);
 			return (
 				<Badge
 					variant='outline'

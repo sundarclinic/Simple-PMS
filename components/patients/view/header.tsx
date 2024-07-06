@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo } from 'react';
 
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -23,9 +23,10 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Phone, Copy, CopyCheck, MoreHorizontal } from 'lucide-react';
 
-import { toast } from 'sonner';
 import { Patient } from '@/db/schemas/patients';
 import { cn, dateFormatter } from '@/lib/utils';
+import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard';
+import { toast } from 'sonner';
 
 interface Props
 	extends React.HTMLAttributes<React.ComponentPropsWithoutRef<typeof Card>> {
@@ -37,26 +38,13 @@ const PatientHeader: React.FC<Props> = ({ patient }) => {
 		const images = ['clinic.png', 'consulatation.png', 'mri.png'];
 		return images[Math.floor(Math.random() * images.length)];
 	}, []);
-	const [isCopied, setIsCopied] = useState(false);
+	const { isCopied, handleCopyToClipboard } = useCopyToClipboard();
 
-	const handleCopyToClipboard = (text: string) => async () => {
-		try {
-			await navigator.clipboard.writeText(text);
-			toast.success('Copied to clipboard');
-			setIsCopied(true);
-		} catch (error) {
-			toast.error('Failed to copy to clipboard');
-		}
+	const handleCopy = () => {
+		handleCopyToClipboard(patient.email)
+			.then(toast.success)
+			.catch(toast.error);
 	};
-
-	useEffect(() => {
-		if (isCopied) {
-			const timer = setTimeout(() => {
-				setIsCopied(false);
-			}, 2000);
-			return () => clearTimeout(timer);
-		}
-	}, [isCopied]);
 
 	return (
 		<Card className='overflow-hidden'>
@@ -127,7 +115,7 @@ const PatientHeader: React.FC<Props> = ({ patient }) => {
 					<Button
 						className='gap-2'
 						variant='outline'
-						onClick={handleCopyToClipboard(patient.email)}
+						onClick={handleCopy}
 					>
 						{isCopied ? (
 							<CopyCheck size={16} />

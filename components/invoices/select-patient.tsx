@@ -27,13 +27,12 @@ import {
 import BounceLoader from '../ui/bounce-loader';
 
 import { useFormContext } from 'react-hook-form';
-import { InsertInvoice } from '@/db/schemas/invoices';
+import { InsertInvoice, Invoice } from '@/db/schemas/invoices';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useDebounce } from '@/hooks/use-debounce';
 import { getPatientsByName } from '@/lib/patients/actions';
 import { Patient } from '@/db/schemas/patients';
 import { cn } from '@/lib/utils';
-import { Invoice } from '@/lib/types';
 
 interface Props
 	extends React.HTMLAttributes<React.ComponentPropsWithoutRef<typeof Card>> {

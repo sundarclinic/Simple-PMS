@@ -21,7 +21,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Phone, Clipboard, ClipboardCheck, MoreHorizontal } from 'lucide-react';
+import { Phone, Copy, CopyCheck, MoreHorizontal } from 'lucide-react';
 
 import { toast } from 'sonner';
 import { Patient } from '@/db/schemas/patients';
@@ -96,6 +96,7 @@ const PatientHeader: React.FC<Props> = ({ patient }) => {
 							)}
 						>
 							<MoreHorizontal size={20} />
+							<span className='sr-only'>Options</span>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent>
 							<DropdownMenuLabel>Actions</DropdownMenuLabel>
@@ -129,9 +130,9 @@ const PatientHeader: React.FC<Props> = ({ patient }) => {
 						onClick={handleCopyToClipboard(patient.email)}
 					>
 						{isCopied ? (
-							<ClipboardCheck size={16} />
+							<CopyCheck size={16} />
 						) : (
-							<Clipboard size={16} />
+							<Copy size={16} />
 						)}
 						<span>Copy Email</span>
 					</Button>

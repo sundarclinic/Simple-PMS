@@ -8,14 +8,25 @@ import {
 } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import InvoicesTable from '@/components/dashboard/invoices-table';
-import RecentInvoice from '@/components/dashboard/recent-invoice';
+import RecentInvoice from '@/components/dashboard/recent-invoice/index';
 import InsightCard from '@/components/dashboard/insight-card';
+import NoInvoiceSelected from '@/components/dashboard/no-invoice-selected';
 
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import { getDashboardInsights } from '@/lib/dashboard/actions';
+import { PageParams } from '@/lib/types';
+import { Invoice } from '@/db/schemas/invoices';
+import { getInvoiceById } from '@/lib/invoices/actions';
+import { Patient } from '@/db/schemas/patients';
 
-export default async function Dashboard() {
+type DashboardPageParams = PageParams & {
+	searchParams?: { selectedInvoice?: string };
+};
+
+type SelectedInvoice = { invoice: Invoice; patient: Patient } | null;
+
+export default async function Dashboard({ searchParams }: DashboardPageParams) {
 	const supabase = createClient();
 
 	const {
@@ -27,6 +38,13 @@ export default async function Dashboard() {
 	}
 
 	const insights = await getDashboardInsights();
+
+	let invoice: SelectedInvoice;
+	if (searchParams?.selectedInvoice) {
+		invoice = await getInvoiceById(searchParams.selectedInvoice);
+	} else {
+		invoice = null;
+	}
 
 	return (
 		<div className='grid items-start gap-4 md:gap-8 lg:grid-cols-3'>
@@ -61,7 +79,11 @@ export default async function Dashboard() {
 				</section>
 				<InvoicesTable />
 			</div>
-			<RecentInvoice />
+			{invoice ? (
+				<RecentInvoice invoice={invoice} />
+			) : (
+				<NoInvoiceSelected />
+			)}
 		</div>
 	);
 }

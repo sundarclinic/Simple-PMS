@@ -21,6 +21,7 @@ export default function InvoiceDetails() {
 	const {
 		control,
 		register,
+		watch,
 		formState: { isSubmitting },
 	} = useFormContext<InsertInvoice>();
 	return (
@@ -68,6 +69,11 @@ export default function InvoiceDetails() {
 										{...field}
 										{...register('paidAmount', {
 											valueAsNumber: true,
+											max: {
+												value: watch('amount'),
+												message:
+													'Paid amount cannot exceed the total amount',
+											},
 										})}
 									/>
 								</FormControl>

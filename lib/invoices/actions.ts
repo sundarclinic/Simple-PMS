@@ -29,7 +29,13 @@ export const getInvoiceById = async (id: Invoice['id']) => {
 	}
 };
 
-export const getInvoices = async () => {
+type GetInvoiceArgs =
+	| {
+			limit?: number | undefined;
+	  }
+	| undefined;
+
+export const getInvoices = async (options?: GetInvoiceArgs) => {
 	try {
 		const invoiceColumns = getTableColumns(invoices);
 		const allInvoices = await db
@@ -39,7 +45,8 @@ export const getInvoices = async () => {
 			})
 			.from(invoices)
 			.orderBy(desc(invoices.dueDate))
-			.leftJoin(patients, eq(invoices.patientId, patients.id));
+			.leftJoin(patients, eq(invoices.patientId, patients.id))
+			.limit(options?.limit);
 		return allInvoices;
 	} catch (error) {
 		console.log(error);

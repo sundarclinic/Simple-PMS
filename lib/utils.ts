@@ -19,3 +19,11 @@ export const dateFormatter = (date: Date) => {
 		day: 'numeric',
 	}).format(date);
 };
+
+export const currencyFormatter = (amount: number) => {
+	return new Intl.NumberFormat('en-IN', {
+		style: 'currency',
+		currency: 'INR',
+		maximumSignificantDigits: 3,
+	}).format(amount);
+};

@@ -1,17 +1,20 @@
 import { useState, useEffect, useCallback } from 'react';
+import { toast } from 'sonner';
 
 export const useCopyToClipboard = () => {
 	const [isCopied, setIsCopied] = useState(false);
 
 	const handleCopyToClipboard = useCallback(
-		(text: string): Promise<string> => {
-			return new Promise(async (resolve, reject) => {
+		(text: string, key: string): Promise<void> => {
+			return new Promise(async (resolve) => {
 				try {
 					await navigator.clipboard.writeText(text);
 					setIsCopied(true);
-					resolve('Copied to clipboard');
+					toast.success(`Copied ${key} to clipboard`);
+					resolve();
 				} catch (error) {
-					reject('Failed to copy to clipboard');
+					toast.error(`Failed to copy ${key} to clipboard`);
+					resolve();
 				}
 			});
 		},

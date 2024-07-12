@@ -9,8 +9,6 @@ import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { SubmitButton } from '@/components/ui/submit-button';
 
-import PatientInvoices from '../common/invoices';
-import PatientPayments from '../common/payments';
 import PatientDateOfBirth from './dob';
 import PatientImage from './image';
 import DeletePatient from './delete';
@@ -131,8 +129,6 @@ const PatientEditForm: React.FC<Props> = ({ patient }) => {
 				<div className='grid gap-4 md:grid-cols-[1fr_250px] lg:grid-cols-3 lg:gap-8'>
 					<div className='grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8'>
 						<PatientDetails />
-						<PatientInvoices />
-						<PatientPayments />
 					</div>
 					<div className='grid auto-rows-max items-start gap-4 lg:gap-8'>
 						<PatientDateOfBirth />

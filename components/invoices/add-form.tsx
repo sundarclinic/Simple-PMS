@@ -69,7 +69,7 @@ const InvoicesAddForm = () => {
 						className='h-7 w-7'
 						asChild
 					>
-						<Link href={'/dashboard/patients'}>
+						<Link href={'/dashboard/invoices'}>
 							<ChevronLeft className='h-4 w-4' />
 							<span className='sr-only'>Back</span>
 						</Link>
@@ -82,7 +82,7 @@ const InvoicesAddForm = () => {
 					</Badge>
 					<div className='hidden items-center gap-2 md:ml-auto md:flex'>
 						<Button variant='outline' size='sm' asChild>
-							<Link href='/dashboard/patients'>Discard</Link>
+							<Link href='/dashboard/invoices'>Discard</Link>
 						</Button>
 						<SubmitButton
 							size='sm'

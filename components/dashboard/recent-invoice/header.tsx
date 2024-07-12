@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Copy, ReceiptText } from 'lucide-react';
+import { ReceiptText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
 	Card,
@@ -9,11 +9,13 @@ import {
 	CardTitle,
 } from '@/components/ui/card';
 import Options from './options';
+import { Badge } from '@/components/ui/badge';
 
 import { Invoice } from '@/db/schemas/invoices';
 import { Patient } from '@/db/schemas/patients';
-import { dateFormatter } from '@/lib/utils';
+import { capitalize, cn, dateFormatter } from '@/lib/utils';
 import CopyInvoiceIdBtn from './copy-invoice-id-btn';
+import { getInvoiceStatus } from '@/lib/invoices/utils';
 
 interface Props
 	extends React.HTMLAttributes<React.ComponentPropsWithoutRef<typeof Card>> {
@@ -21,6 +23,8 @@ interface Props
 }
 
 const Header: React.FC<Props> = ({ invoice }) => {
+	const status = getInvoiceStatus(invoice.invoice);
+
 	return (
 		<CardHeader className='bg-muted/50'>
 			<div className='flex flex-row items-start gap-2'>
@@ -35,14 +39,31 @@ const Header: React.FC<Props> = ({ invoice }) => {
 						</div>
 					</CardTitle>
 				</section>
-				<section className='ml-auto flex items-center gap-1'>
-					<Button size='sm' variant='outline' className='h-8 gap-1'>
-						<ReceiptText className='h-3.5 w-3.5' />
-						<span className='lg:sr-only xl:not-sr-only xl:whitespace-nowrap'>
-							Mark as Paid
-						</span>
-					</Button>
-					<Options invoice={invoice} />
+				<section className='ml-auto'>
+					<div className='flex items-center gap-1'>
+						<Button
+							size='sm'
+							variant='outline'
+							className='h-8 gap-1'
+							disabled
+						>
+							<ReceiptText className='h-3.5 w-3.5' />
+							<span className='lg:sr-only xl:not-sr-only xl:whitespace-nowrap'>
+								Mark as Paid
+							</span>
+						</Button>
+						<Options invoice={invoice} />
+					</div>
+					<Badge
+						variant='outline'
+						className={cn('text-white mt-1', {
+							'bg-red-500': status === 'unpaid',
+							'bg-green-500': status === 'paid',
+							'bg-orange-500': status === 'partially-paid',
+						})}
+					>
+						{capitalize(status)}
+					</Badge>
 				</section>
 			</div>
 			<CardDescription className='mt-2'>

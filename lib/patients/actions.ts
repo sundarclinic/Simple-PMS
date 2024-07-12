@@ -9,6 +9,7 @@ import {
 } from '@/db/schemas/patients';
 import { DrizzleError, eq, desc, ilike, or } from 'drizzle-orm';
 import { ActionResponse } from '@/lib/types';
+import { revalidatePath } from 'next/cache';
 
 export const getPatientById = async (id: Patient['id']) => {
 	try {
@@ -74,6 +75,7 @@ export async function addPatient(
 			};
 		}
 
+		revalidatePath('/dashboard/patients');
 		return {
 			message: 'Patient added successfully',
 			id: result[0].insertedId,
@@ -82,8 +84,21 @@ export async function addPatient(
 		console.log(error);
 		if (error instanceof DrizzleError) {
 			return { message: error.message };
+		} else if (error instanceof Error && error.name === 'PostgresError') {
+			if (
+				(error as Error & { constraint_name: string })
+					.constraint_name === 'paitents_phone_unique'
+			) {
+				return { message: 'Phone number already exists' };
+			} else {
+				return {
+					message: 'Error adding patient. Please try again.',
+				};
+			}
 		} else {
-			return { message: 'Error adding patient. Please try again.' };
+			return {
+				message: 'Error adding patient. Please try again.',
+			};
 		}
 	}
 }
@@ -107,6 +122,7 @@ export async function editPatient(
 			};
 		}
 
+		revalidatePath('/dashboard/patients');
 		return {
 			message: 'Patient edited successfully',
 			id: result[0].insertedId,
@@ -116,7 +132,9 @@ export async function editPatient(
 		if (error instanceof DrizzleError) {
 			return { message: error.message };
 		} else {
-			return { message: 'Error editing patient. Please try again.' };
+			return {
+				message: 'Error editing patient. Please try again.',
+			};
 		}
 	}
 }
@@ -135,6 +153,7 @@ export async function deletePatient(
 			};
 		}
 
+		revalidatePath('/dashboard/patients');
 		return {
 			message: 'Patient deleted successfully',
 		};
@@ -142,7 +161,9 @@ export async function deletePatient(
 		if (error instanceof DrizzleError) {
 			return { message: error.message };
 		} else {
-			return { message: 'Error deleting patient. Please try again.' };
+			return {
+				message: 'Error deleting patient. Please try again.',
+			};
 		}
 	}
 }

@@ -10,6 +10,7 @@ import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import { PageParams } from '@/lib/types';
 import { getPatientById } from '@/lib/patients/actions';
+import { getPatientInvoices } from '@/lib/invoices/actions';
 
 type ViewPageParams = PageParams & { params: { patientId: string } };
 
@@ -34,13 +35,18 @@ const ViewIndividualPatient = async ({ params }: ViewPageParams) => {
 		return redirect('/dashboard/patients');
 	}
 
+	const invoices = await getPatientInvoices(params.patientId);
+
 	return (
 		<div className='grid items-start gap-4 md:gap-8'>
 			<div className='mx-auto grid max-w-2xl flex-1 gap-4 w-full'>
 				<PatientHeader patient={patient} />
 				<PatientDetails patient={patient} />
 				<Separator decorative />
-				<PatientInvoices />
+				<PatientInvoices
+					invoices={invoices}
+					patientId={params.patientId}
+				/>
 				<PatientPayments />
 			</div>
 		</div>

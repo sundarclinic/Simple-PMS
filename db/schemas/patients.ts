@@ -12,7 +12,7 @@ import z from 'zod';
 export const patients = pgTable('paitents', {
 	id: uuid('id').primaryKey(),
 	name: text('name').notNull(),
-	phone: text('phone').notNull(),
+	phone: text('phone').unique().notNull(),
 	age: integer('age'),
 	address: text('address'),
 	email: text('email'),

@@ -13,24 +13,13 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { Patient } from '@/db/schemas/patients';
 import { capitalize, dateFormatter } from '@/lib/utils';
 import { Invoice } from '@/db/schemas/invoices';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 import { getInvoiceStatus } from '@/lib/invoices/utils';
 
-export type InvoicesTableProps = Invoice & { patient: Patient };
-
-export const invoiceColumns: ColumnDef<InvoicesTableProps>[] = [
-	{
-		accessorKey: 'patient.name',
-		header: 'Name',
-	},
-	{
-		accessorKey: 'patient.phone',
-		header: 'Phone',
-	},
+export const invoiceColumns: ColumnDef<Invoice>[] = [
 	{
 		accessorKey: 'createdAt',
 		header: () => <div className='hidden sm:table-cell'>Created At</div>,
@@ -117,13 +106,6 @@ export const invoiceColumns: ColumnDef<InvoicesTableProps>[] = [
 						<DropdownMenuItem asChild className='cursor-pointer'>
 							<Link href={`/dashboard/payments/edit`}>
 								Add Payment
-							</Link>
-						</DropdownMenuItem>
-						<DropdownMenuItem asChild className='cursor-pointer'>
-							<Link
-								href={`/dashboard/patients/edit/${patientId}`}
-							>
-								View Patient
 							</Link>
 						</DropdownMenuItem>
 						<DropdownMenuItem>Delete</DropdownMenuItem>

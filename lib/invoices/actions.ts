@@ -10,6 +10,7 @@ import {
 import { desc, DrizzleError, eq, getTableColumns } from 'drizzle-orm';
 import { ActionResponse } from '@/lib/types';
 import { patients } from '@/db/schemas/patients';
+import { revalidatePath } from 'next/cache';
 
 export const getInvoiceById = async (id: Invoice['id']) => {
 	try {
@@ -54,6 +55,19 @@ export const getInvoices = async (options?: GetInvoiceArgs) => {
 	}
 };
 
+export const getPatientInvoices = async (patientId: string) => {
+	try {
+		const allInvoices = await db
+			.select()
+			.from(invoices)
+			.where(eq(invoices.patientId, patientId));
+		return allInvoices;
+	} catch (error) {
+		console.log(error);
+		return [];
+	}
+};
+
 export async function addInvoice(
 	data: InsertInvoice
 ): Promise<ActionResponse & { id?: Invoice['id'] }> {
@@ -71,6 +85,7 @@ export async function addInvoice(
 			};
 		}
 
+		revalidatePath('/dashboard/invoices');
 		return {
 			message: 'Invoice added successfully',
 			id: result[0].insertedId,
@@ -104,6 +119,7 @@ export async function editInvoice(
 			};
 		}
 
+		revalidatePath('/dashboard/invoices');
 		return {
 			message: 'Invoice edited successfully',
 			id: result[0].insertedId,
@@ -132,6 +148,7 @@ export async function deleteInvoice(
 			};
 		}
 
+		revalidatePath('/dashboard/invoices');
 		return {
 			message: 'Invoice deleted successfully',
 		};

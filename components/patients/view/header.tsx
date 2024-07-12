@@ -40,12 +40,6 @@ const PatientHeader: React.FC<Props> = ({ patient }) => {
 	}, []);
 	const { isCopied, handleCopyToClipboard } = useCopyToClipboard();
 
-	const handleCopy = () => {
-		handleCopyToClipboard(patient.email)
-			.then(toast.success)
-			.catch(toast.error);
-	};
-
 	return (
 		<Card className='overflow-hidden'>
 			<CardHeader
@@ -115,7 +109,9 @@ const PatientHeader: React.FC<Props> = ({ patient }) => {
 					<Button
 						className='gap-2'
 						variant='outline'
-						onClick={handleCopy}
+						onClick={() =>
+							handleCopyToClipboard(patient.email, 'email')
+						}
 					>
 						{isCopied ? (
 							<CopyCheck size={16} />

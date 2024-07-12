@@ -1,4 +1,5 @@
 import z from 'zod';
+import { PostgresError } from 'postgres';
 
 const paymentsSchema = z.object({
 	id: z.string(),

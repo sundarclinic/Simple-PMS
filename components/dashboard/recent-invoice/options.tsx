@@ -16,6 +16,7 @@ import { MoreVertical, Copy, CopyCheck } from 'lucide-react';
 import { Invoice } from '@/db/schemas/invoices';
 import { Patient } from '@/db/schemas/patients';
 import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard';
+import { currencyFormatter, dateFormatter } from '@/lib/utils';
 
 interface Props
 	extends React.HTMLAttributes<
@@ -27,11 +28,13 @@ interface Props
 const Options: React.FC<Props> = ({ invoice }) => {
 	const { isCopied, handleCopyToClipboard } = useCopyToClipboard();
 
-	const text = `${invoice.patient.name} you have pending payment of ${
+	const text = `${
+		invoice.patient.name
+	} you have pending payment of ${currencyFormatter(
 		invoice.invoice.amount - invoice.invoice.paidAmount
-	} to Sundar Clinic due on ${
-		invoice.invoice.dueDate
-	}. Please make the payment at your earliest convenience. Thank you!`;
+	)} to Sundar Clinic due on ${dateFormatter(
+		new Date(invoice.invoice.dueDate)
+	)}. Please make the payment at your earliest convenience. Thank you!`;
 
 	return (
 		<DropdownMenu>
@@ -52,7 +55,9 @@ const Options: React.FC<Props> = ({ invoice }) => {
 				<DropdownMenuItem
 					role='button'
 					className='cursor-pointer flex items-center gap-2'
-					onClick={() => handleCopyToClipboard(text)}
+					onClick={() =>
+						handleCopyToClipboard(text, 'invoice details')
+					}
 				>
 					{isCopied ? <CopyCheck size={16} /> : <Copy size={16} />}{' '}
 					{isCopied ? 'Copied!' : 'Copy details'}

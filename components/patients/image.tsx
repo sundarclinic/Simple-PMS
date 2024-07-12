@@ -31,6 +31,7 @@ const PatientImage = () => {
 		control,
 		getValues,
 		setValue,
+		watch,
 		formState: { isSubmitting },
 	} = useFormContext<InsertPatient>();
 	const [file, setFile] = useState<File | null>(null);
@@ -153,7 +154,7 @@ const PatientImage = () => {
 												: field.value
 												? field.value
 												: `https://api.dicebear.com/9.x/fun-emoji/svg?seed=${encodeURI(
-														getValues('name') ||
+														watch('name') ||
 															'patient'
 												  )}`
 										}`}

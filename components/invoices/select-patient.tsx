@@ -26,6 +26,7 @@ import {
 } from '@/components/ui/form';
 import BounceLoader from '../ui/bounce-loader';
 
+import { useSearchParams } from 'next/navigation';
 import { useFormContext } from 'react-hook-form';
 import { InsertInvoice, Invoice } from '@/db/schemas/invoices';
 import { useMediaQuery } from '@/hooks/use-media-query';
@@ -33,6 +34,8 @@ import { useDebounce } from '@/hooks/use-debounce';
 import { getPatientsByName } from '@/lib/patients/actions';
 import { Patient } from '@/db/schemas/patients';
 import { cn } from '@/lib/utils';
+import { getPatientById } from '@/lib/patients/actions';
+import { toast } from 'sonner';
 
 interface Props
 	extends React.HTMLAttributes<React.ComponentPropsWithoutRef<typeof Card>> {
@@ -49,12 +52,44 @@ const SelectPatient: React.FC<Props> = ({ invoice }) => {
 		control,
 		formState: { isSubmitting },
 	} = useFormContext<InsertInvoice>();
+	const searchParams = useSearchParams();
 
 	useEffect(() => {
 		if (invoice) {
 			setSelectedPatient(invoice.patient);
 		}
 	}, [invoice]);
+
+	useEffect(() => {
+		const patientId = searchParams.get('patientId');
+		if (!patientId) return;
+		toast.promise(handleGetPatientById(patientId), {
+			loading: 'Adding patient to invoice...',
+			success: (patient: Patient) => {
+				return `${patient.name} added to invoice`;
+			},
+			error: 'Error adding patient to invoice. Please try adding manually.',
+		});
+	}, [searchParams]);
+
+	const handleGetPatientById = (
+		patientId: string
+	): Promise<Patient | null> => {
+		return new Promise(async (resolve, reject) => {
+			const patient = await getPatientById(patientId);
+			if (patient) {
+				setSelectedPatient(patient);
+				resolve(patient);
+			} else {
+				window.history.replaceState(
+					null,
+					'',
+					'/dashboard/invoices/edit'
+				);
+				reject(null);
+			}
+		});
+	};
 
 	return (
 		<Card>

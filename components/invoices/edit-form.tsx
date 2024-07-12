@@ -22,6 +22,8 @@ import { toast } from 'sonner';
 import { insertInvoice, InsertInvoice, Invoice } from '@/db/schemas/invoices';
 import { editInvoice } from '@/lib/invoices/actions';
 import { Patient } from '@/db/schemas/patients';
+import { capitalize, cn } from '@/lib/utils';
+import { getInvoiceStatus } from '@/lib/invoices/utils';
 
 interface Props
 	extends React.HTMLAttributes<React.ComponentPropsWithoutRef<'div'>> {
@@ -48,6 +50,8 @@ const InvoicesEditForm: React.FC<Props> = ({ invoice }) => {
 	const {
 		formState: { isSubmitting },
 	} = form;
+
+	const status = getInvoiceStatus(invoice.invoice);
 
 	useEffect(() => {
 		if (invoice.invoice) {
@@ -96,10 +100,17 @@ const InvoicesEditForm: React.FC<Props> = ({ invoice }) => {
 						</Link>
 					</Button>
 					<h1 className='flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0'>
-						New Invoice
+						Edit Invoice
 					</h1>
-					<Badge variant='outline' className='ml-auto sm:ml-0'>
-						To be paid
+					<Badge
+						variant='outline'
+						className={cn('text-white mt-1', {
+							'bg-red-500': status === 'unpaid',
+							'bg-green-500': status === 'paid',
+							'bg-orange-500': status === 'partially-paid',
+						})}
+					>
+						{capitalize(status)}
 					</Badge>
 					<div className='hidden items-center gap-2 md:ml-auto md:flex'>
 						<Button variant='outline' size='sm' asChild>

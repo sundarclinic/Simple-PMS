@@ -44,7 +44,7 @@ export default function RootLayout({
 			<body className='bg-background text-foreground font-sans'>
 				<TooltipProvider>
 					{children}
-					<Toaster />
+					<Toaster richColors theme='light' />
 				</TooltipProvider>
 			</body>
 		</html>

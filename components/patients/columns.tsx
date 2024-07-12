@@ -21,7 +21,7 @@ export const patientColums: ColumnDef<Patient>[] = [
 	{
 		accessorKey: 'image',
 		header: () => (
-			<div className='hidden sm:table-cell'>
+			<div className='hidden sm:block'>
 				<span className='sr-only'>Image</span>
 			</div>
 		),
@@ -30,7 +30,7 @@ export const patientColums: ColumnDef<Patient>[] = [
 			return image ? (
 				<Image
 					alt={row.getValue('name')}
-					className='aspect-square rounded-md object-cover hidden sm:table-cell'
+					className='aspect-square rounded-md object-cover hidden sm:block'
 					height='64'
 					src={image}
 					width='64'
@@ -49,19 +49,19 @@ export const patientColums: ColumnDef<Patient>[] = [
 	},
 	{
 		accessorKey: 'age',
-		header: () => <div className='hidden sm:table-cell'>Age</div>,
+		header: () => <div className='hidden sm:block'>Age</div>,
 		cell: ({ row }) => {
 			const { age } = row.original;
-			return <div className='hidden sm:table-cell'>{age}</div>;
+			return <div className='hidden sm:block'>{age}</div>;
 		},
 	},
 	{
 		accessorKey: 'dob',
-		header: () => <div className='hidden sm:table-cell'>Date of Birth</div>,
+		header: () => <div className='hidden sm:block'>Date of Birth</div>,
 		cell: ({ row }) => {
 			const { dob } = row.original;
 			return (
-				<div className='hidden sm:table-cell'>
+				<div className='hidden sm:block'>
 					{dob ? dateFormatter(new Date(dob)) : null}
 				</div>
 			);
@@ -70,12 +70,12 @@ export const patientColums: ColumnDef<Patient>[] = [
 	{
 		accessorKey: 'address',
 		header: () => (
-			<div className='hidden sm:max-w-[12rem] sm:table-cell'>Address</div>
+			<div className='hidden sm:max-w-[12rem] sm:block'>Address</div>
 		),
 		cell: ({ row }) => {
 			const { address } = row.original;
 			return (
-				<div className='sm:max-w-[12rem] hidden sm:table-cell'>
+				<div className='sm:max-w-[12rem] hidden sm:block'>
 					{address}
 				</div>
 			);

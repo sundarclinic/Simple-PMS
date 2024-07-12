@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 import Link from 'next/link';
 import {
@@ -26,7 +26,7 @@ interface Props
 }
 
 const Options: React.FC<Props> = ({ invoice }) => {
-	const { isCopied, handleCopyToClipboard } = useCopyToClipboard();
+	const { handleCopyToClipboard } = useCopyToClipboard();
 
 	const text = `${
 		invoice.patient.name
@@ -55,12 +55,14 @@ const Options: React.FC<Props> = ({ invoice }) => {
 				<DropdownMenuItem
 					role='button'
 					className='cursor-pointer flex items-center gap-2'
-					onClick={() =>
-						handleCopyToClipboard(text, 'invoice details')
-					}
+					onClick={(e) => {
+						e.preventDefault();
+						handleCopyToClipboard(text, 'invoice details');
+					}}
+					onSelect={(e) => e.preventDefault()}
 				>
-					{isCopied ? <CopyCheck size={16} /> : <Copy size={16} />}{' '}
-					{isCopied ? 'Copied!' : 'Copy details'}
+					<Copy size={16} />
+					Copy
 				</DropdownMenuItem>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem asChild className='cursor-pointer'>

@@ -27,3 +27,7 @@ export const currencyFormatter = (amount: number) => {
 		maximumSignificantDigits: 3,
 	}).format(amount);
 };
+
+export function sleep(ms: number) {
+	return new Promise((resolve) => setTimeout(resolve, ms));
+}

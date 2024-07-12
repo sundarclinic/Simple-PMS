@@ -37,6 +37,16 @@ const Header: React.FC<Props> = ({ invoice }) => {
 							</span>
 							<CopyInvoiceIdBtn invoiceId={invoice.invoice.id} />
 						</div>
+						<Badge
+							variant='outline'
+							className={cn('text-white mt-1 w-fit', {
+								'bg-red-500': status === 'unpaid',
+								'bg-green-500': status === 'paid',
+								'bg-orange-500': status === 'partially-paid',
+							})}
+						>
+							{capitalize(status)}
+						</Badge>
 					</CardTitle>
 				</section>
 				<section className='ml-auto'>
@@ -54,16 +64,6 @@ const Header: React.FC<Props> = ({ invoice }) => {
 						</Button>
 						<Options invoice={invoice} />
 					</div>
-					<Badge
-						variant='outline'
-						className={cn('text-white mt-1', {
-							'bg-red-500': status === 'unpaid',
-							'bg-green-500': status === 'paid',
-							'bg-orange-500': status === 'partially-paid',
-						})}
-					>
-						{capitalize(status)}
-					</Badge>
 				</section>
 			</div>
 			<CardDescription className='mt-2'>

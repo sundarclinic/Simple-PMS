@@ -38,11 +38,12 @@ const ViewIndividualPatient = async ({ params }: ViewPageParams) => {
 	const invoices = await getPatientInvoices(params.patientId);
 
 	return (
-		<div className='grid items-start gap-4 md:gap-8'>
-			<div className='mx-auto grid max-w-2xl flex-1 gap-4 w-full'>
+		<div className='grid items-start gap-4 md:gap-8 mx-auto lg:grid-cols-2 max-w-7xl'>
+			<div className='grid gap-4 w-full h-fit lg:sticky lg:top-[5.5rem]'>
 				<PatientHeader patient={patient} />
 				<PatientDetails patient={patient} />
-				<Separator decorative />
+			</div>
+			<div className='grid gap-4'>
 				<PatientInvoices
 					invoices={invoices}
 					patientId={params.patientId}

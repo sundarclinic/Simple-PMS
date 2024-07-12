@@ -22,11 +22,11 @@ import { getInvoiceStatus } from '@/lib/invoices/utils';
 export const invoiceColumns: ColumnDef<Invoice>[] = [
 	{
 		accessorKey: 'createdAt',
-		header: () => <div className='hidden sm:table-cell'>Created At</div>,
+		header: () => <div className='hidden sm:block'>Created At</div>,
 		cell: ({ row }) => {
 			const { createdAt } = row.original;
 			return (
-				<div className='hidden sm:table-cell'>
+				<div className='hidden sm:block'>
 					{createdAt ? dateFormatter(new Date(createdAt)) : null}
 				</div>
 			);

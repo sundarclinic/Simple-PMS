@@ -16,6 +16,7 @@ import { toast } from 'sonner';
 import { InsertPayment, Payment } from '@/db/schemas/payments';
 import { Patient } from '@/db/schemas/patients';
 import { Invoice } from '@/db/schemas/invoices';
+import { deletePayment } from '@/lib/payments/actions';
 
 interface Props
 	extends React.HTMLAttributes<React.ComponentPropsWithoutRef<typeof Card>> {
@@ -26,21 +27,23 @@ const DeletePayment: React.FC<Props> = ({ payment }) => {
 	const router = useRouter();
 	const {
 		formState: { isSubmitting },
+		getValues,
 	} = useFormContext<InsertPayment>();
 	const [loading, setLoading] = useState(false);
 
 	const handleDelete = async () => {
 		try {
 			setLoading(true);
-			// const { message } = await deleteInvoice(
-			// 	invoice?.invoice.id as string
-			// );
-			// if (message === 'Payment deleted successfully') {
-			// 	toast.success(message);
-			// 	router.push('/dashboard/payments');
-			// } else {
-			// 	toast.error(message);
-			// }
+			const { message } = await deletePayment(
+				payment?.id,
+				getValues('updateInvoices')
+			);
+			if (message === 'Payment deleted successfully') {
+				toast.success(message);
+				router.push('/dashboard/payments');
+			} else {
+				toast.error(message);
+			}
 		} catch (error) {
 			toast.error('Error deleting payment. Please try again.');
 		} finally {

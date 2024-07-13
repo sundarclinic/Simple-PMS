@@ -309,3 +309,73 @@ export async function editPayment(
 		}
 	});
 }
+
+export async function deletePayment(
+	id: Payment['id'],
+	updateInvoices: boolean
+): Promise<ActionResponse & { id?: Payment['id'] }> {
+	return new Promise(async (resolve, reject) => {
+		try {
+			if (updateInvoices) {
+				const payment = await getPaymentById(id);
+				if (!payment) return { message: 'Payment not found' };
+
+				db.transaction(async (trx) => {
+					const unpaidInvoices = await checkPatientHasUnpaidInvoices(
+						payment.patient.id
+					);
+
+					await decrementInvoicePaymentForPatient(
+						{
+							paymentInfo: payment as unknown as InsertPayment,
+							unpaidInvoices,
+						},
+						trx
+					);
+
+					const response = await db
+						.delete(payments)
+						.where(eq(payments.id, id))
+						.returning({ deletedId: payments.id });
+					if (!response[0]?.deletedId) {
+						resolve({
+							message:
+								'Error deleting payment. Please try again.',
+						});
+					}
+					revalidatePath('/dashboard/payments');
+					revalidatePath('/dashboard');
+					resolve({
+						message: 'Payment deleted successfully',
+						id: response[0].deletedId,
+					});
+				});
+
+				return { message: 'Payment deleted successfully' };
+			} else {
+				const response = await db
+					.delete(payments)
+					.where(eq(payments.id, id))
+					.returning({ deletedId: payments.id });
+				if (!response[0]?.deletedId) {
+					resolve({
+						message: 'Error deleting payment. Please try again.',
+					});
+				}
+				revalidatePath('/dashboard/payments');
+				revalidatePath('/dashboard');
+				resolve({
+					message: 'Payment deleted successfully',
+					id: response[0].deletedId,
+				});
+			}
+		} catch (error) {
+			console.log(error);
+			if (error instanceof DrizzleError) {
+				reject({ message: error.message });
+			} else {
+				reject({ message: 'Error editing payment. Please try again.' });
+			}
+		}
+	});
+}

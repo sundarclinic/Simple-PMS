@@ -15,7 +15,7 @@ import {
 import { ColumnDef } from '@tanstack/react-table';
 import { capitalize, dateFormatter } from '@/lib/utils';
 import { Invoice } from '@/db/schemas/invoices';
-import { cn } from '@/lib/utils';
+import { cn, currencyFormatter } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 import { getInvoiceStatus } from '@/lib/invoices/utils';
 
@@ -43,10 +43,18 @@ export const invoiceColumns: ColumnDef<Invoice>[] = [
 	{
 		accessorKey: 'amount',
 		header: 'Amount',
+		cell: ({ row }) => {
+			const { amount } = row.original;
+			return currencyFormatter(amount);
+		},
 	},
 	{
 		accessorKey: 'paidAmount',
 		header: 'Paid Amount',
+		cell: ({ row }) => {
+			const { paidAmount } = row.original;
+			return currencyFormatter(paidAmount);
+		},
 	},
 	{
 		accessorKey: 'status',

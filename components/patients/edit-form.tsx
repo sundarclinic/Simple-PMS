@@ -19,6 +19,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { Patient, insertPatient, InsertPatient } from '@/db/schemas/patients';
+import { useRouter } from 'next/navigation';
 
 interface Props
 	extends React.HTMLAttributes<React.ComponentPropsWithoutRef<'div'>> {
@@ -26,6 +27,7 @@ interface Props
 }
 
 const PatientEditForm: React.FC<Props> = ({ patient }) => {
+	const router = useRouter();
 	const form = useForm<InsertPatient>({
 		resolver: zodResolver(insertPatient),
 		defaultValues: useMemo(() => {
@@ -81,6 +83,7 @@ const PatientEditForm: React.FC<Props> = ({ patient }) => {
 			const { message } = await editPatient(data);
 			if (message === 'Patient edited successfully') {
 				toast.success(message);
+				router.push(`/dashboard/patients/${patient.id}`);
 			} else {
 				toast.error(message);
 			}

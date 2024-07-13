@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { dateFormatter } from '@/lib/utils';
+import { dateFormatter, currencyFormatter } from '@/lib/utils';
 import { Invoice } from '@/db/schemas/invoices';
 import { Payment } from '@/db/schemas/payments';
 import { Patient } from '@/db/schemas/patients';
@@ -43,6 +43,10 @@ export const paymentColumns: ColumnDef<PaymentTableProps>[] = [
 	{
 		accessorKey: 'amount',
 		header: 'Amount',
+		cell: ({ row }) => {
+			const { amount } = row.original;
+			return currencyFormatter(amount);
+		},
 	},
 	{
 		accessorKey: 'notes',

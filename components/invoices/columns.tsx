@@ -14,7 +14,7 @@ import {
 
 import { ColumnDef } from '@tanstack/react-table';
 import { Patient } from '@/db/schemas/patients';
-import { capitalize, dateFormatter } from '@/lib/utils';
+import { capitalize, dateFormatter, currencyFormatter } from '@/lib/utils';
 import { Invoice } from '@/db/schemas/invoices';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
@@ -42,10 +42,18 @@ export const invoiceColumns: ColumnDef<InvoicesTableProps>[] = [
 	{
 		accessorKey: 'amount',
 		header: 'Amount',
+		cell: ({ row }) => {
+			const { amount } = row.original;
+			return currencyFormatter(amount);
+		},
 	},
 	{
 		accessorKey: 'paidAmount',
 		header: 'Paid Amount',
+		cell: ({ row }) => {
+			const { paidAmount } = row.original;
+			return currencyFormatter(paidAmount);
+		},
 	},
 	{
 		accessorKey: 'status',

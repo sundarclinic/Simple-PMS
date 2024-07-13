@@ -1,15 +1,10 @@
 'use server';
 
 import db from '@/db';
-import {
-	payments,
-	Payment,
-	InsertPayment,
-	InsertPaymentToDb,
-} from '@/db/schemas/payments';
-import { invoices } from '@/db/schemas/invoices';
+import { payments, Payment, InsertPayment } from '@/db/schemas/payments';
+import { Invoice, invoices } from '@/db/schemas/invoices';
 import { patients } from '@/db/schemas/patients';
-import { eq, getTableColumns, DrizzleError } from 'drizzle-orm';
+import { eq, getTableColumns, DrizzleError, sql } from 'drizzle-orm';
 import { ActionResponse } from '../types';
 import { revalidatePath } from 'next/cache';
 import {
@@ -19,6 +14,7 @@ import {
 	incrementInvoicePaymentForPatient,
 	updatePaymentToDb,
 } from './utils';
+import { v4 as uuid } from 'uuid';
 
 export const getPaymentById = async (id: Payment['id']) => {
 	try {
@@ -79,6 +75,63 @@ export const getPatientPayments = async (patientId: string) => {
 		return [];
 	}
 };
+
+export async function markInvoiceAsPaid(
+	invoice: Invoice
+): Promise<ActionResponse & { id?: Payment['id'] }> {
+	return new Promise(async (resolve, reject) => {
+		console.log(invoice);
+		try {
+			db.transaction(async (trx) => {
+				const response = await trx
+					.update(invoices)
+					.set({
+						paidAmount:
+							invoice.paidAmount +
+							(invoice.amount - invoice.paidAmount),
+						updatedAt: new Date(),
+					})
+					.where(eq(invoices.id, invoice.id))
+					.returning({ updatedId: invoices.id });
+				if (!response[0].updatedId) {
+					resolve({ message: 'Error marking invoice as paid' });
+				}
+
+				const payment = await addPaymentToDb(
+					{
+						data: {
+							id: uuid(),
+							amount: invoice.amount - invoice.paidAmount,
+							date: new Date(),
+							patientId: invoice.patientId,
+							notes: 'Invoice Payment',
+							updateInvoices: false,
+						},
+						invoiceId: invoice.id,
+					},
+					trx
+				);
+
+				if (!payment[0]?.insertedId) {
+					resolve({ message: 'Error marking invoice as paid' });
+				}
+
+				revalidatePath('/dashboard/invoices');
+				revalidatePath('/dashboard');
+				resolve({ message: 'Invoice marked as paid' });
+			});
+		} catch (error) {
+			console.log(error);
+			if (error instanceof DrizzleError) {
+				reject({ message: error.message });
+			} else {
+				reject({
+					message: 'Error marking invoice as paid. Please try again.',
+				});
+			}
+		}
+	});
+}
 
 export async function addPayment(
 	data: InsertPayment
@@ -374,7 +427,9 @@ export async function deletePayment(
 			if (error instanceof DrizzleError) {
 				reject({ message: error.message });
 			} else {
-				reject({ message: 'Error editing payment. Please try again.' });
+				reject({
+					message: 'Error deleting payment. Please try again.',
+				});
 			}
 		}
 	});

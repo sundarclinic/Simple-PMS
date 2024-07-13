@@ -52,7 +52,7 @@ const Header: React.FC<Props> = ({ invoice }) => {
 				</section>
 				<section className='ml-auto'>
 					<div className='flex items-center gap-1'>
-						<MarkInvoiceAsPaidBtn />
+						<MarkInvoiceAsPaidBtn invoice={invoice.invoice} />
 						<Options invoice={invoice} />
 					</div>
 				</section>

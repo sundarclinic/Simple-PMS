@@ -39,7 +39,12 @@ export const getDashboardInsights = async () => {
 		const overdueInvoices = await db
 			.select({ total: count() })
 			.from(invoices)
-			.where(lte(invoices.dueDate, new Date().toDateString()));
+			.where(
+				and(
+					lte(invoices.dueDate, new Date().toDateString()),
+					gte(invoices.paidAmount, invoices.amount)
+				)
+			);
 		const lastWeekOverdueInvoices = await db
 			.select({ total: count() })
 			.from(invoices)
@@ -53,7 +58,8 @@ export const getDashboardInsights = async () => {
 								new Date().setDate(new Date().getDate() - 7)
 							)
 						),
-						lte(invoices.createdAt, new Date())
+						lte(invoices.createdAt, new Date()),
+						gte(invoices.paidAmount, invoices.amount)
 					)
 				)
 			);

@@ -23,6 +23,7 @@ import { editInvoice } from '@/lib/invoices/actions';
 import { Patient } from '@/db/schemas/patients';
 import { capitalize, cn } from '@/lib/utils';
 import { getInvoiceStatus } from '@/lib/invoices/utils';
+import { useRouter } from 'next/navigation';
 
 interface Props
 	extends React.HTMLAttributes<React.ComponentPropsWithoutRef<'div'>> {
@@ -30,6 +31,7 @@ interface Props
 }
 
 const InvoicesEditForm: React.FC<Props> = ({ invoice }) => {
+	const router = useRouter();
 	const form = useForm<InsertInvoice>({
 		resolver: zodResolver(insertInvoice),
 		defaultValues: useMemo(() => {
@@ -72,6 +74,7 @@ const InvoicesEditForm: React.FC<Props> = ({ invoice }) => {
 			const { message } = await editInvoice(values);
 			if (message === 'Invoice edited successfully') {
 				toast.success(message);
+				router.push(`/dashboard/invoices/${invoice.invoice.id}`);
 			} else {
 				toast.error(message);
 			}

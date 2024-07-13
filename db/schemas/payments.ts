@@ -1,0 +1,58 @@
+import {
+	pgTable,
+	text,
+	uuid,
+	date,
+	integer,
+	timestamp,
+	AnyPgColumn,
+} from 'drizzle-orm/pg-core';
+import { createInsertSchema } from 'drizzle-zod';
+import z from 'zod';
+import { invoices } from './invoices';
+
+export const payments = pgTable('payments', {
+	id: uuid('id').primaryKey(),
+	invoiceId: uuid('invoice_id')
+		.notNull()
+		.references((): AnyPgColumn => invoices.id, {
+			onDelete: 'cascade',
+		}),
+	amount: integer('amount').notNull(),
+	date: date('date').notNull(),
+	notes: text('notes'),
+	createdAt: timestamp('created_at').defaultNow().notNull(),
+	updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+export const insertPayment = createInsertSchema(payments)
+	.omit({
+		id: true,
+		createdAt: true,
+		updatedAt: true,
+	})
+	.merge(
+		z.object({
+			id: z.string().uuid(),
+			invoiceId: z
+				.string({
+					message:
+						'Invoice is required to be associated with the payment.',
+				})
+				.uuid(),
+			amount: z.number().min(1),
+			date: z.date(),
+			notes: z
+				.string()
+				.nullable()
+				.optional()
+				.transform((v) => {
+					if (v === undefined || v === '') return null;
+					return v;
+				}),
+		})
+	);
+
+export type Payment = typeof payments.$inferSelect;
+export type InsertPaymentToDb = typeof payments.$inferInsert;
+export type InsertPayment = z.infer<typeof insertPayment>;

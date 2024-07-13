@@ -19,6 +19,7 @@ import { Invoice } from '@/db/schemas/invoices';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 import { getInvoiceStatus } from '@/lib/invoices/utils';
+import MarkInvoiceAsPaidBtn from '../common/mark-as-paid-btn';
 
 export type InvoicesTableProps = Invoice & { patient: Patient };
 
@@ -114,15 +115,14 @@ export const invoiceColumns: ColumnDef<InvoicesTableProps>[] = [
 								Edit
 							</Link>
 						</DropdownMenuItem>
+						<DropdownMenuLabel>Related</DropdownMenuLabel>
 						<DropdownMenuItem asChild className='cursor-pointer'>
 							<Link href={`/dashboard/payments/edit`}>
 								Add Payment
 							</Link>
 						</DropdownMenuItem>
 						<DropdownMenuItem asChild className='cursor-pointer'>
-							<Link
-								href={`/dashboard/patients/edit/${patientId}`}
-							>
+							<Link href={`/dashboard/patients/${patientId}`}>
 								View Patient
 							</Link>
 						</DropdownMenuItem>

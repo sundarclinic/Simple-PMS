@@ -70,7 +70,7 @@ export const invoiceColumns: ColumnDef<Invoice>[] = [
 	{
 		id: 'actions',
 		cell: ({ row }) => {
-			const { id, patientId } = row.original;
+			const { id } = row.original;
 			const pathname = usePathname();
 			const isDashboard = pathname === '/dashboard';
 			return (

@@ -47,7 +47,7 @@ const InvoicesAddForm = () => {
 			const { message, id } = await addInvoice(values);
 			if (message === 'Invoice added successfully') {
 				toast.success(message);
-				router.push(`/dashboard/invoices/edit/${id}`);
+				router.push(`/dashboard/invoices/${id}`);
 			} else {
 				toast.error(message);
 			}

@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { Separator } from '@/components/ui/separator';
 import PatientHeader from '@/components/patients/view/header';
 import PatientDetails from '@/components/patients/view/details';
 import PatientInvoices from '@/components/common/invoices';

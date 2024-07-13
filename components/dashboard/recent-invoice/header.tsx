@@ -16,6 +16,7 @@ import { Patient } from '@/db/schemas/patients';
 import { capitalize, cn, dateFormatter } from '@/lib/utils';
 import CopyInvoiceIdBtn from './copy-invoice-id-btn';
 import { getInvoiceStatus } from '@/lib/invoices/utils';
+import MarkInvoiceAsPaidBtn from '@/components/common/mark-as-paid-btn';
 
 interface Props
 	extends React.HTMLAttributes<React.ComponentPropsWithoutRef<typeof Card>> {
@@ -51,17 +52,7 @@ const Header: React.FC<Props> = ({ invoice }) => {
 				</section>
 				<section className='ml-auto'>
 					<div className='flex items-center gap-1'>
-						<Button
-							size='sm'
-							variant='outline'
-							className='h-8 gap-1'
-							disabled
-						>
-							<ReceiptText className='h-3.5 w-3.5' />
-							<span className='lg:sr-only xl:not-sr-only xl:whitespace-nowrap'>
-								Mark as Paid
-							</span>
-						</Button>
+						<MarkInvoiceAsPaidBtn />
 						<Options invoice={invoice} />
 					</div>
 				</section>

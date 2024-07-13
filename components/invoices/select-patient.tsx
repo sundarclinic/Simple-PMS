@@ -27,7 +27,7 @@ import {
 import BounceLoader from '../ui/bounce-loader';
 
 import { useSearchParams } from 'next/navigation';
-import { useFormContext } from 'react-hook-form';
+import { ControllerRenderProps, useFormContext } from 'react-hook-form';
 import { InsertInvoice, Invoice } from '@/db/schemas/invoices';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useDebounce } from '@/hooks/use-debounce';
@@ -51,6 +51,7 @@ const SelectPatient: React.FC<Props> = ({ invoice }) => {
 	const {
 		control,
 		formState: { isSubmitting },
+		setValue,
 	} = useFormContext<InsertInvoice>();
 	const searchParams = useSearchParams();
 
@@ -79,6 +80,7 @@ const SelectPatient: React.FC<Props> = ({ invoice }) => {
 			const patient = await getPatientById(patientId);
 			if (patient) {
 				setSelectedPatient(patient);
+				setValue('patientId', patient.id);
 				resolve(patient);
 			} else {
 				window.history.replaceState(
@@ -89,6 +91,12 @@ const SelectPatient: React.FC<Props> = ({ invoice }) => {
 				reject(null);
 			}
 		});
+	};
+
+	const handleClearPatient = (field: ControllerRenderProps) => {
+		setSelectedPatient(null);
+		field.onChange(null);
+		window.history.replaceState(null, '', '/dashboard/invoices/edit');
 	};
 
 	return (
@@ -104,7 +112,20 @@ const SelectPatient: React.FC<Props> = ({ invoice }) => {
 						disabled={isSubmitting}
 						render={({ field }) => (
 							<FormItem className='grid gap-3'>
-								<FormLabel>Patient</FormLabel>
+								<FormLabel>
+									<span>Patient</span>
+									{field.value !== null ? (
+										<Button
+											variant='link'
+											className='text-xs m-0 px-1.5 py-0 h-fit'
+											onClick={() => {
+												handleClearPatient(field);
+											}}
+										>
+											Clear
+										</Button>
+									) : null}
+								</FormLabel>
 								<FormControl>
 									{isDesktop ? (
 										<Popover

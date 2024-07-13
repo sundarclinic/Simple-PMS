@@ -1,14 +1,4 @@
 import z from 'zod';
-import { PostgresError } from 'postgres';
-
-const paymentsSchema = z.object({
-	id: z.string(),
-	invoice_id: z.string(),
-	amount: z.number().min(1),
-	date: z.string(),
-});
-
-export type Payment = z.infer<typeof paymentsSchema>;
 
 export type FormState = {
 	message: string;

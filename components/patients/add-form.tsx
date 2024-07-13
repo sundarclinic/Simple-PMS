@@ -54,7 +54,7 @@ const PatientAddForm = () => {
 			const { message, id } = await addPatient(data);
 			if (message === 'Patient added successfully') {
 				toast.success(message);
-				router.push(`/dashboard/patients/edit/${id}`);
+				router.push(`/dashboard/patients/${id}`);
 			} else {
 				toast.error(message);
 			}

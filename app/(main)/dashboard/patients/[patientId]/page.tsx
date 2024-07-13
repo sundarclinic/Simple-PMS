@@ -10,6 +10,7 @@ import { redirect } from 'next/navigation';
 import { PageParams } from '@/lib/types';
 import { getPatientById } from '@/lib/patients/actions';
 import { getPatientInvoices } from '@/lib/invoices/actions';
+import { getPatientPayments } from '@/lib/payments/actions';
 
 type ViewPageParams = PageParams & { params: { patientId: string } };
 
@@ -35,6 +36,7 @@ const ViewIndividualPatient = async ({ params }: ViewPageParams) => {
 	}
 
 	const invoices = await getPatientInvoices(params.patientId);
+	const payments = await getPatientPayments(params.patientId);
 
 	return (
 		<div className='grid items-start gap-4 md:gap-8 mx-auto lg:grid-cols-2 max-w-7xl'>
@@ -47,7 +49,10 @@ const ViewIndividualPatient = async ({ params }: ViewPageParams) => {
 					invoices={invoices}
 					patientId={params.patientId}
 				/>
-				<PatientPayments />
+				<PatientPayments
+					patientId={params.patientId}
+					payments={payments}
+				/>
 			</div>
 		</div>
 	);

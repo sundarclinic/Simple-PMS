@@ -29,6 +29,20 @@
       "when": 1720813954837,
       "tag": "0003_vengeful_nextwave",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1720833246409,
+      "tag": "0004_dapper_abomination",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1720844529795,
+      "tag": "0005_sleepy_salo",
+      "breakpoints": true
     }
   ]
 }

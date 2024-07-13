@@ -2,8 +2,13 @@ import React from 'react';
 
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
+import PaymentEditForm from '@/components/payments/edit-form';
+import { PageParams } from '@/lib/types';
+import { getPaymentById } from '@/lib/payments/actions';
 
-const EditPayment = async () => {
+type EditPageParams = PageParams & { params: { id: string } };
+
+const EditPayment = async ({ params }: EditPageParams) => {
 	const supabase = createClient();
 
 	const {
@@ -13,7 +18,18 @@ const EditPayment = async () => {
 	if (!user) {
 		return redirect('/login');
 	}
-	return <div className='grid items-start gap-4 md:gap-8'>EditPayment</div>;
+
+	const payment = await getPaymentById(params?.id);
+
+	if (!payment) {
+		return redirect('/dashboard/payments');
+	}
+
+	return (
+		<div className='grid items-start gap-4 md:gap-8'>
+			<PaymentEditForm payment={payment} />
+		</div>
+	);
 };
 
 export default EditPayment;

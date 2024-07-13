@@ -19,7 +19,6 @@ import { Invoice } from '@/db/schemas/invoices';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 import { getInvoiceStatus } from '@/lib/invoices/utils';
-import MarkInvoiceAsPaidBtn from '../common/mark-as-paid-btn';
 
 export type InvoicesTableProps = Invoice & { patient: Patient };
 
@@ -31,18 +30,6 @@ export const invoiceColumns: ColumnDef<InvoicesTableProps>[] = [
 	{
 		accessorKey: 'patient.phone',
 		header: 'Phone',
-	},
-	{
-		accessorKey: 'createdAt',
-		header: () => <div className='hidden sm:block'>Created At</div>,
-		cell: ({ row }) => {
-			const { createdAt } = row.original;
-			return (
-				<div className='hidden sm:block'>
-					{createdAt ? dateFormatter(new Date(createdAt)) : null}
-				</div>
-			);
-		},
 	},
 	{
 		accessorKey: 'dueDate',

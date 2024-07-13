@@ -1,12 +1,3 @@
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardFooter,
-	CardHeader,
-	CardTitle,
-} from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
 import InvoicesTable from '@/components/dashboard/invoices-table';
 import RecentInvoice from '@/components/dashboard/recent-invoice/index';
 import InsightCard from '@/components/dashboard/insight-card';
@@ -52,7 +43,7 @@ export default async function Dashboard({ searchParams }: DashboardPageParams) {
 				<section className='grid grid-cols-[repeat(auto-fill,minmax(15rem,1fr))] gap-4 md:gap-8'>
 					<InsightCard
 						label='Total Outstanding Dues'
-						value={`₹ ${insights.outstandingDues}`}
+						value={`₹${insights.outstandingDues}`}
 						percentage={insights.weekDifference.outstandingDues}
 					/>
 					<InsightCard
@@ -60,22 +51,13 @@ export default async function Dashboard({ searchParams }: DashboardPageParams) {
 						value={insights.overdueInvoices}
 						percentage={insights.weekDifference.overdueInvoices}
 					/>
-					<Card className='flex flex-col'>
-						<CardHeader className='pb-2'>
-							<CardDescription>
-								Total Payment Received
-							</CardDescription>
-							<CardTitle className='text-4xl'>₹ 25,000</CardTitle>
-						</CardHeader>
-						<CardContent>
-							<div className='text-xs text-muted-foreground'>
-								+27% from last week
-							</div>
-						</CardContent>
-						<CardFooter className='mt-auto'>
-							<Progress value={27} aria-label='25% increase' />
-						</CardFooter>
-					</Card>
+					<InsightCard
+						label='Total Payment Received'
+						value={`₹${insights.totalPaymentsReceived}`}
+						percentage={
+							insights.weekDifference.totalPaymentsReceived
+						}
+					/>
 				</section>
 				<InvoicesTable />
 			</div>

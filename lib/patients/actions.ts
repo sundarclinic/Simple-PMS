@@ -76,6 +76,7 @@ export async function addPatient(
 		}
 
 		revalidatePath('/dashboard/patients');
+		revalidatePath('/dashboard');
 		return {
 			message: 'Patient added successfully',
 			id: result[0].insertedId,
@@ -123,6 +124,7 @@ export async function editPatient(
 		}
 
 		revalidatePath('/dashboard/patients');
+		revalidatePath('/dashboard');
 		return {
 			message: 'Patient edited successfully',
 			id: result[0].insertedId,
@@ -154,6 +156,7 @@ export async function deletePatient(
 		}
 
 		revalidatePath('/dashboard/patients');
+		revalidatePath('/dashboard');
 		return {
 			message: 'Patient deleted successfully',
 		};

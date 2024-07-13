@@ -86,6 +86,7 @@ export async function addInvoice(
 		}
 
 		revalidatePath('/dashboard/invoices');
+		revalidatePath('/dashboard');
 		return {
 			message: 'Invoice added successfully',
 			id: result[0].insertedId,
@@ -120,6 +121,7 @@ export async function editInvoice(
 		}
 
 		revalidatePath('/dashboard/invoices');
+		revalidatePath('/dashboard');
 		return {
 			message: 'Invoice edited successfully',
 			id: result[0].insertedId,
@@ -149,6 +151,7 @@ export async function deleteInvoice(
 		}
 
 		revalidatePath('/dashboard/invoices');
+		revalidatePath('/dashboard');
 		return {
 			message: 'Invoice deleted successfully',
 		};

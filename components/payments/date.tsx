@@ -9,23 +9,23 @@ import {
 } from '@/components/ui/form';
 
 import { useFormContext } from 'react-hook-form';
-import { InsertInvoice } from '@/db/schemas/invoices';
+import { InsertPayment } from '@/db/schemas/payments';
 
-export default function InvoiceDueDate() {
+export default function PaymentDate() {
 	const {
 		control,
 		formState: { isSubmitting },
-	} = useFormContext<InsertInvoice>();
+	} = useFormContext<InsertPayment>();
 	return (
 		<Card>
 			<CardHeader>
-				<CardTitle>Due Date</CardTitle>
+				<CardTitle>Payment Date</CardTitle>
 			</CardHeader>
 			<CardContent>
 				<div className='grid gap-6'>
 					<FormField
 						control={control}
-						name='dueDate'
+						name='date'
 						disabled={isSubmitting}
 						render={({
 							field: { value, onChange, ...fieldProps },

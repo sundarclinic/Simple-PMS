@@ -1,5 +1,6 @@
 import db from '@/db';
 import { invoices } from '@/db/schemas/invoices';
+import { payments } from '@/db/schemas/payments';
 import { sql, lte, and, gte, count } from 'drizzle-orm';
 
 export const getDashboardInsights = async () => {
@@ -62,12 +63,51 @@ export const getDashboardInsights = async () => {
 				(lastWeekOverdueInvoices[0]?.total || 1)) *
 			100;
 
+		const totalPaymentsReceivedThisWeek = await db
+			.select({
+				total: sql<number>`SUM(${payments.amount})`,
+			})
+			.from(payments)
+			.where(
+				and(
+					gte(
+						payments.createdAt,
+						new Date(new Date().setDate(new Date().getDate() - 7))
+					),
+					lte(payments.createdAt, new Date())
+				)
+			);
+		const totalPaymentsReceivedLastWeek = await db
+			.select({
+				total: sql<number>`SUM(${payments.amount})`,
+			})
+			.from(payments)
+			.where(
+				and(
+					gte(
+						payments.createdAt,
+						new Date(new Date().setDate(new Date().getDate() - 14))
+					),
+					lte(
+						payments.createdAt,
+						new Date(new Date().setDate(new Date().getDate() - 7))
+					)
+				)
+			);
+		const totalPaymentsReceivedDifference =
+			(((totalPaymentsReceivedThisWeek[0]?.total || 0) -
+				(totalPaymentsReceivedLastWeek[0]?.total || 0)) /
+				(totalPaymentsReceivedLastWeek[0]?.total || 1)) *
+			100;
+
 		return {
 			outstandingDues: outstandingInvoices[0]?.total || 0,
 			overdueInvoices: overdueInvoices[0]?.total || 0,
+			totalPaymentsReceived: totalPaymentsReceivedThisWeek[0]?.total || 0,
 			weekDifference: {
 				outstandingDues: outstandingDuesDifference,
 				overdueInvoices: overdueInvoicesDifference,
+				totalPaymentsReceived: totalPaymentsReceivedDifference,
 			},
 		};
 	} catch (error) {

@@ -13,11 +13,9 @@ import { invoices } from './invoices';
 
 export const payments = pgTable('payments', {
 	id: uuid('id').primaryKey(),
-	invoiceId: uuid('invoice_id')
-		.notNull()
-		.references((): AnyPgColumn => invoices.id, {
-			onDelete: 'cascade',
-		}),
+	invoiceId: uuid('invoice_id').references((): AnyPgColumn => invoices.id, {
+		onDelete: 'cascade',
+	}),
 	amount: integer('amount').notNull(),
 	date: date('date').notNull(),
 	notes: text('notes'),
@@ -30,18 +28,21 @@ export const insertPayment = createInsertSchema(payments)
 		id: true,
 		createdAt: true,
 		updatedAt: true,
+		invoiceId: true,
 	})
 	.merge(
 		z.object({
 			id: z.string().uuid(),
-			invoiceId: z
+			amount: z.number().min(1, {
+				message: 'Amount must be greater than 0.',
+			}),
+			patientId: z
 				.string({
 					message:
-						'Invoice is required to be associated with the payment.',
+						'Patient is required to be associated with the payment.',
 				})
 				.uuid(),
-			amount: z.number().min(1),
-			date: z.date(),
+			date: z.date({ message: 'Date is required for the payment.' }),
 			notes: z
 				.string()
 				.nullable()
@@ -50,6 +51,7 @@ export const insertPayment = createInsertSchema(payments)
 					if (v === undefined || v === '') return null;
 					return v;
 				}),
+			updateInvoices: z.boolean().default(false),
 		})
 	);
 

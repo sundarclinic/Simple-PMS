@@ -28,7 +28,7 @@ import BounceLoader from '../ui/bounce-loader';
 
 import { useSearchParams } from 'next/navigation';
 import { ControllerRenderProps, useFormContext } from 'react-hook-form';
-import { InsertInvoice, Invoice } from '@/db/schemas/invoices';
+import { InsertPayment, Payment } from '@/db/schemas/payments';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useDebounce } from '@/hooks/use-debounce';
 import { getPatientsByName } from '@/lib/patients/actions';
@@ -37,13 +37,14 @@ import { cn } from '@/lib/utils';
 import { getPatientById } from '@/lib/patients/actions';
 import { toast } from 'sonner';
 import { usePathname } from 'next/navigation';
+import { Invoice } from '@/db/schemas/invoices';
 
 interface Props
 	extends React.HTMLAttributes<React.ComponentPropsWithoutRef<typeof Card>> {
-	invoice?: { invoice: Invoice; patient: Patient } | null;
+	payment?: (Payment & { invoice: Invoice; patient: Patient }) | null;
 }
 
-const SelectPatient: React.FC<Props> = ({ invoice }) => {
+const SelectPatient: React.FC<Props> = ({ payment }) => {
 	const [open, setOpen] = useState(false);
 	const isDesktop = useMediaQuery('(min-width: 768px)');
 	const [selectedPatient, setSelectedPatient] = useState<Patient | null>(
@@ -53,25 +54,25 @@ const SelectPatient: React.FC<Props> = ({ invoice }) => {
 		control,
 		formState: { isSubmitting },
 		setValue,
-	} = useFormContext<InsertInvoice>();
+	} = useFormContext<InsertPayment>();
 	const searchParams = useSearchParams();
 	const pathname = usePathname();
 
 	useEffect(() => {
-		if (invoice) {
-			setSelectedPatient(invoice.patient);
+		if (payment) {
+			setSelectedPatient(payment.patient);
 		}
-	}, [invoice]);
+	}, [payment]);
 
 	useEffect(() => {
 		const patientId = searchParams.get('patientId');
 		if (!patientId) return;
 		toast.promise(handleGetPatientById(patientId), {
-			loading: 'Adding patient to invoice...',
+			loading: 'Adding patient to payment...',
 			success: (patient: Patient) => {
-				return `${patient.name} added to invoice`;
+				return `${patient.name} added to payment`;
 			},
-			error: 'Error adding patient to invoice. Please try adding manually.',
+			error: 'Error adding patient to payment. Please try adding manually.',
 		});
 	}, [searchParams]);
 
@@ -100,7 +101,7 @@ const SelectPatient: React.FC<Props> = ({ invoice }) => {
 	return (
 		<Card>
 			<CardHeader>
-				<CardTitle>Invoice For</CardTitle>
+				<CardTitle>Payment For</CardTitle>
 			</CardHeader>
 			<CardContent>
 				<div className='grid gap-6'>

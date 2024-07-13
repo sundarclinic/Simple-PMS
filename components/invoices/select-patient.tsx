@@ -91,9 +91,9 @@ const SelectPatient: React.FC<Props> = ({ invoice }) => {
 		});
 	};
 
-	const handleClearPatient = (field: ControllerRenderProps) => {
+	const handleClearPatient = () => {
 		setSelectedPatient(null);
-		field.onChange(null);
+		setValue('patientId', null);
 		window.history.replaceState(null, '', pathname);
 	};
 
@@ -118,9 +118,7 @@ const SelectPatient: React.FC<Props> = ({ invoice }) => {
 											type='button'
 											variant='link'
 											className='text-xs m-0 px-1.5 py-0 h-fit'
-											onClick={() => {
-												handleClearPatient(field);
-											}}
+											onClick={handleClearPatient}
 										>
 											Clear
 										</Button>

@@ -27,7 +27,7 @@ import {
 import BounceLoader from '../ui/bounce-loader';
 
 import { useSearchParams } from 'next/navigation';
-import { ControllerRenderProps, useFormContext } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import { InsertPayment, Payment } from '@/db/schemas/payments';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useDebounce } from '@/hooks/use-debounce';
@@ -92,9 +92,9 @@ const SelectPatient: React.FC<Props> = ({ payment }) => {
 		});
 	};
 
-	const handleClearPatient = (field: ControllerRenderProps) => {
+	const handleClearPatient = () => {
 		setSelectedPatient(null);
-		field.onChange(null);
+		setValue('patientId', null);
 		window.history.replaceState(null, '', pathname);
 	};
 
@@ -119,9 +119,7 @@ const SelectPatient: React.FC<Props> = ({ payment }) => {
 											type='button'
 											variant='link'
 											className='text-xs m-0 px-1.5 py-0 h-fit'
-											onClick={() => {
-												handleClearPatient(field);
-											}}
+											onClick={handleClearPatient}
 										>
 											Clear
 										</Button>

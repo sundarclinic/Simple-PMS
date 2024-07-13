@@ -5,6 +5,11 @@ import LoginForm from '@/components/auth/login-form';
 
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+	title: 'Login',
+};
 
 export default async function Login() {
 	const supabase = createClient();

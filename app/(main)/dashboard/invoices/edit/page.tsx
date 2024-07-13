@@ -4,6 +4,11 @@ import InvoicesAddForm from '@/components/invoices/add-form';
 
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+	title: 'New Invoice',
+};
 
 const NewInvoice = async () => {
 	const supabase = createClient();

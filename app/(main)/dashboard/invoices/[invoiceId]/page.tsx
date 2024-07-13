@@ -8,8 +8,23 @@ import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import { PageParams } from '@/lib/types';
 import { getInvoiceById } from '@/lib/invoices/actions';
+import { Metadata } from 'next';
 
 type ViewPageParams = PageParams & { params: { invoiceId: string } };
+
+export async function generateMetadata({
+	params,
+}: ViewPageParams): Promise<Metadata> {
+	const invoice = await getInvoiceById(params.invoiceId);
+	if (!invoice) {
+		return {
+			title: 'Invoice Not Found',
+		};
+	}
+	return {
+		title: `Invoice for ${invoice.patient.name}`,
+	};
+}
 
 const ViewIndividualInvoice = async ({ params }: ViewPageParams) => {
 	const supabase = createClient();

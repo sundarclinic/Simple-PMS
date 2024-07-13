@@ -3,16 +3,18 @@ import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
 
 import { cn } from '@/lib/utils';
+import { PMS_URL } from '@/lib/config';
+import { Metadata } from 'next';
+
 import './globals.css';
 
-const defaultUrl = process.env.VERCEL_URL
-	? `https://${process.env.VERCEL_URL}`
-	: 'http://localhost:3000';
-
-export const metadata = {
-	metadataBase: new URL(defaultUrl),
-	title: 'Next.js and Supabase Starter Kit',
-	description: 'The fastest way to build apps with Next.js and Supabase',
+export const metadata: Metadata = {
+	metadataBase: PMS_URL,
+	title: {
+		template: '%s | Sundar Clinic PMS',
+		default: 'Sundar Clinic PMS',
+	},
+	description: "Sundar Clinic's very own Patient Management System",
 };
 
 const sourceSans3 = Source_Sans_3({

@@ -21,9 +21,10 @@ import MarkInvoiceAsPaidBtn from '@/components/common/mark-as-paid-btn';
 interface Props
 	extends React.HTMLAttributes<React.ComponentPropsWithoutRef<typeof Card>> {
 	invoice: { invoice: Invoice; patient: Patient };
+	handlePrint: () => void;
 }
 
-const Header: React.FC<Props> = ({ invoice }) => {
+const Header: React.FC<Props> = ({ invoice, handlePrint }) => {
 	const status = getInvoiceStatus(invoice.invoice);
 
 	return (
@@ -53,7 +54,7 @@ const Header: React.FC<Props> = ({ invoice }) => {
 				<section className='ml-auto'>
 					<div className='flex items-center gap-1'>
 						<MarkInvoiceAsPaidBtn invoice={invoice.invoice} />
-						<Options invoice={invoice} />
+						<Options invoice={invoice} handlePrint={handlePrint} />
 					</div>
 				</section>
 			</div>

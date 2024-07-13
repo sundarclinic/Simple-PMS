@@ -13,6 +13,11 @@ import PatientsTable from '@/components/patients/patients-table';
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import { getPatients } from '@/lib/patients/actions';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+	title: 'Patients',
+};
 
 export default async function Patients() {
 	const supabase = createClient();

@@ -5,6 +5,11 @@ import { redirect } from 'next/navigation';
 import PaymentEditForm from '@/components/payments/edit-form';
 import { PageParams } from '@/lib/types';
 import { getPaymentById } from '@/lib/payments/actions';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+	title: 'Edit Payment',
+};
 
 type EditPageParams = PageParams & { params: { id: string } };
 

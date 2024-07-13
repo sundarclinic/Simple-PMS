@@ -112,7 +112,9 @@ export const invoiceColumns: ColumnDef<InvoicesTableProps>[] = [
 						</DropdownMenuItem>
 						<DropdownMenuLabel>Related</DropdownMenuLabel>
 						<DropdownMenuItem asChild className='cursor-pointer'>
-							<Link href={`/dashboard/payments/edit`}>
+							<Link
+								href={`/dashboard/payments/edit?patientId=${patientId}`}
+							>
 								Add Payment
 							</Link>
 						</DropdownMenuItem>

@@ -11,8 +11,23 @@ import { PageParams } from '@/lib/types';
 import { getPatientById } from '@/lib/patients/actions';
 import { getPatientInvoices } from '@/lib/invoices/actions';
 import { getPatientPayments } from '@/lib/payments/actions';
+import { Metadata } from 'next';
 
 type ViewPageParams = PageParams & { params: { patientId: string } };
+
+export async function generateMetadata({
+	params,
+}: ViewPageParams): Promise<Metadata> {
+	const patient = await getPatientById(params?.patientId);
+	if (!patient) {
+		return {
+			title: 'Patient Not Found',
+		};
+	}
+	return {
+		title: `${patient.name}'s Profile`,
+	};
+}
 
 const ViewIndividualPatient = async ({ params }: ViewPageParams) => {
 	const supabase = createClient();

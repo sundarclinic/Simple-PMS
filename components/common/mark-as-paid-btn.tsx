@@ -40,7 +40,7 @@ const MarkInvoiceAsPaidBtn: React.FC<Props> = ({ invoice, className }) => {
 		<Button
 			size='sm'
 			variant='outline'
-			className={cn('h-8 gap-1', className)}
+			className={cn('h-8 gap-1 print:hidden', className)}
 			onClick={handleMarkAsPaid}
 			disabled={loading}
 		>

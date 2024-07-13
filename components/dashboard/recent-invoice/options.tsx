@@ -11,7 +11,7 @@ import {
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { MoreVertical, Copy, CopyCheck } from 'lucide-react';
+import { MoreVertical, Copy, Printer } from 'lucide-react';
 
 import { Invoice } from '@/db/schemas/invoices';
 import { Patient } from '@/db/schemas/patients';
@@ -23,9 +23,10 @@ interface Props
 		React.ComponentPropsWithoutRef<typeof DropdownMenu>
 	> {
 	invoice: { invoice: Invoice; patient: Patient };
+	handlePrint: () => void;
 }
 
-const Options: React.FC<Props> = ({ invoice }) => {
+const Options: React.FC<Props> = ({ invoice, handlePrint }) => {
 	const { handleCopyToClipboard } = useCopyToClipboard();
 
 	const text = `${
@@ -39,7 +40,11 @@ const Options: React.FC<Props> = ({ invoice }) => {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
-				<Button size='icon' variant='outline' className='h-8 w-8'>
+				<Button
+					size='icon'
+					variant='outline'
+					className='h-8 w-8 print:hidden'
+				>
 					<MoreVertical className='h-3.5 w-3.5' />
 					<span className='sr-only'>More</span>
 				</Button>
@@ -63,6 +68,18 @@ const Options: React.FC<Props> = ({ invoice }) => {
 				>
 					<Copy size={16} />
 					Copy
+				</DropdownMenuItem>
+				<DropdownMenuItem
+					role='button'
+					className='cursor-pointer flex items-center gap-2'
+					onClick={(e) => {
+						e.preventDefault();
+						handlePrint();
+					}}
+					onSelect={(e) => e.preventDefault()}
+				>
+					<Printer size={16} />
+					Print
 				</DropdownMenuItem>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem asChild className='cursor-pointer'>

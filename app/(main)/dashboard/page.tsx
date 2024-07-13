@@ -10,6 +10,11 @@ import { PageParams } from '@/lib/types';
 import { Invoice } from '@/db/schemas/invoices';
 import { getInvoiceById } from '@/lib/invoices/actions';
 import { Patient } from '@/db/schemas/patients';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+	title: 'Dashboard',
+};
 
 type DashboardPageParams = PageParams & {
 	searchParams?: { selectedInvoice?: string };

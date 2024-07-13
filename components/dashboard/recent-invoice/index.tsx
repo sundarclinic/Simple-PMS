@@ -1,3 +1,7 @@
+'use client';
+
+import React, { useRef } from 'react';
+
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import Header from './header';
@@ -5,6 +9,7 @@ import PatientDetails from './patient-details';
 import AddressAndNotes from './address-notes';
 import InvoiceDetails from './invoice-details';
 
+import { useReactToPrint } from 'react-to-print';
 import { Invoice } from '@/db/schemas/invoices';
 import { Patient } from '@/db/schemas/patients';
 import { dateFormatter } from '@/lib/utils';
@@ -15,9 +20,17 @@ interface Props
 }
 
 export default function RecentInvoice({ invoice }: Props) {
+	const componentRef = useRef(null);
+	const handlePrint = useReactToPrint({
+		content: () => componentRef.current,
+		documentTitle: 'Print This Document',
+		onBeforePrint: () => console.log('before printing...'),
+		onAfterPrint: () => console.log('after printing...'),
+		removeAfterPrint: true,
+	});
 	return (
-		<Card className='overflow-hidden w-full'>
-			<Header invoice={invoice} />
+		<Card className='overflow-hidden w-full' ref={componentRef}>
+			<Header invoice={invoice} handlePrint={handlePrint} />
 			<CardContent className='p-6 text-sm'>
 				<InvoiceDetails invoice={invoice.invoice} />
 				<Separator className='my-4' />

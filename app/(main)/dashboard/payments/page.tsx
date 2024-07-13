@@ -13,6 +13,11 @@ import PaymentsTable from '@/components/payments/payments-table';
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import { getPayments } from '@/lib/payments/actions';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+	title: 'Payments',
+};
 
 export default async function Payments() {
 	const supabase = createClient();

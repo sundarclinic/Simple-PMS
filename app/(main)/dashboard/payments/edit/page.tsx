@@ -4,6 +4,11 @@ import PaymentAddForm from '@/components/payments/add-form';
 
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+	title: 'New Payment',
+};
 
 const NewPayment = async () => {
 	const supabase = createClient();

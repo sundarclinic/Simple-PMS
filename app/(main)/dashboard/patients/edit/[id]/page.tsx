@@ -6,6 +6,11 @@ import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import { PageParams } from '@/lib/types';
 import { getPatientById } from '@/lib/patients/actions';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+	title: 'Edit Patient',
+};
 
 type EditPageParams = PageParams & { params: { id: string } };
 

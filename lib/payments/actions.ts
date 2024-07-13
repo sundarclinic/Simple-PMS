@@ -115,9 +115,9 @@ export async function markInvoiceAsPaid(
 				if (!payment[0]?.insertedId) {
 					resolve({ message: 'Error marking invoice as paid' });
 				}
-
 				revalidatePath('/dashboard/invoices');
 				revalidatePath('/dashboard');
+				revalidatePath('/dashboard/invoices/[id]', 'page');
 				resolve({ message: 'Invoice marked as paid' });
 			});
 		} catch (error) {

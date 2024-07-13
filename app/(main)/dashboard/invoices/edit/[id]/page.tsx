@@ -6,6 +6,11 @@ import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import { getInvoiceById } from '@/lib/invoices/actions';
 import { PageParams } from '@/lib/types';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+	title: 'Edit Invoice',
+};
 
 type EditPageParams = PageParams & { params: { id: string } };
 

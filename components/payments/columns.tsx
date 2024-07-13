@@ -10,6 +10,7 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import PaymentInfoDialog from './payment-info-dialog';
 
 import { ColumnDef } from '@tanstack/react-table';
 import { dateFormatter, currencyFormatter } from '@/lib/utils';
@@ -34,11 +35,7 @@ export const paymentColumns: ColumnDef<PaymentTableProps>[] = [
 	},
 	{
 		accessorKey: 'patient.name',
-		header: () => <div className='hidden sm:block'>Patient Name</div>,
-		cell: ({ row }) => {
-			const { patient } = row.original;
-			return <div className='hidden sm:block'>{patient.name}</div>;
-		},
+		header: 'Patient',
 	},
 	{
 		accessorKey: 'amount',
@@ -96,17 +93,13 @@ export const paymentColumns: ColumnDef<PaymentTableProps>[] = [
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align='end'>
 						<DropdownMenuLabel>Actions</DropdownMenuLabel>
-						{/* <DropdownMenuItem asChild className='cursor-pointer'>
-							<Link
-								href={
-									isDashboard
-										? `/dashboard?selectedInvoice=${id}`
-										: `/dashboard/invoices/${id}`
-								}
-							>
-								View
-							</Link>
-						</DropdownMenuItem> */}
+						<DropdownMenuItem
+							className='cursor-pointer'
+							onSelect={(e) => e.preventDefault()}
+							onClick={(e) => e.preventDefault()}
+						>
+							<PaymentInfoDialog payment={row.original} />
+						</DropdownMenuItem>
 						<DropdownMenuItem asChild className='cursor-pointer'>
 							<Link href={`/dashboard/payments/edit/${id}`}>
 								Edit

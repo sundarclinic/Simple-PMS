@@ -23,9 +23,7 @@ export default function RecentInvoice({ invoice }: Props) {
 	const componentRef = useRef(null);
 	const handlePrint = useReactToPrint({
 		content: () => componentRef.current,
-		documentTitle: 'Print This Document',
-		onBeforePrint: () => console.log('before printing...'),
-		onAfterPrint: () => console.log('after printing...'),
+		documentTitle: `Invoice ${invoice.invoice.id} - ${invoice.patient.name} - Sundar Clinic`,
 		removeAfterPrint: true,
 	});
 	return (

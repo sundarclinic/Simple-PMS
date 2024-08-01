@@ -57,10 +57,15 @@ export const getInvoices = async (options?: GetInvoiceArgs) => {
 
 export const getPatientInvoices = async (patientId: string) => {
 	try {
+		const invoiceColumns = getTableColumns(invoices);
 		const allInvoices = await db
-			.select()
+			.select({
+				patient: patients,
+				...invoiceColumns,
+			})
 			.from(invoices)
-			.where(eq(invoices.patientId, patientId));
+			.where(eq(invoices.patientId, patientId))
+			.leftJoin(patients, eq(invoices.patientId, patients.id));
 		return allInvoices;
 	} catch (error) {
 		console.log(error);

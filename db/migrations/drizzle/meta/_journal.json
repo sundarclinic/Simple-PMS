@@ -43,6 +43,27 @@
       "when": 1720844529795,
       "tag": "0005_sleepy_salo",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1720874752103,
+      "tag": "0006_medical_sleeper",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1720875965962,
+      "tag": "0007_smart_switch",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1722535760952,
+      "tag": "0008_complex_tusk",
+      "breakpoints": true
     }
   ]
 }

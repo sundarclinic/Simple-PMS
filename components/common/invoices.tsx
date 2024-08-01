@@ -15,10 +15,11 @@ import { Invoice } from '@/db/schemas/invoices';
 import { DataTable } from '../ui/data-table';
 
 import { invoiceColumns } from './invoice-columns';
+import { Patient } from '@/db/schemas/patients';
 
 interface Props
 	extends React.HTMLAttributes<React.ComponentPropsWithoutRef<typeof Card>> {
-	invoices: Invoice[];
+	invoices: (Invoice & { patient: Patient })[];
 	patientId: string;
 }
 

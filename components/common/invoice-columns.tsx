@@ -18,8 +18,11 @@ import { Invoice } from '@/db/schemas/invoices';
 import { cn, currencyFormatter } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 import { getInvoiceStatus } from '@/lib/invoices/utils';
+import { Patient } from '@/db/schemas/patients';
 
-export const invoiceColumns: ColumnDef<Invoice>[] = [
+type InvoicesTableProps = Invoice & { patient: Patient };
+
+export const invoiceColumns: ColumnDef<InvoicesTableProps>[] = [
 	{
 		accessorKey: 'createdAt',
 		header: () => <div className='hidden sm:block'>Created At</div>,
@@ -78,7 +81,7 @@ export const invoiceColumns: ColumnDef<Invoice>[] = [
 	{
 		id: 'actions',
 		cell: ({ row }) => {
-			const { id } = row.original;
+			const { id, patientId } = row.original;
 			const pathname = usePathname();
 			const isDashboard = pathname === '/dashboard';
 			return (
@@ -112,7 +115,9 @@ export const invoiceColumns: ColumnDef<Invoice>[] = [
 							</Link>
 						</DropdownMenuItem>
 						<DropdownMenuItem asChild className='cursor-pointer'>
-							<Link href={`/dashboard/payments/edit`}>
+							<Link
+								href={`/dashboard/payments/edit?patientId=${patientId}`}
+							>
 								Add Payment
 							</Link>
 						</DropdownMenuItem>

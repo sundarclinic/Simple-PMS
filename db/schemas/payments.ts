@@ -10,12 +10,15 @@ import {
 import { createInsertSchema } from 'drizzle-zod';
 import z from 'zod';
 import { invoices } from './invoices';
+import { patients } from './patients';
 
 export const payments = pgTable('payments', {
 	id: uuid('id').primaryKey(),
-	invoiceId: uuid('invoice_id').references((): AnyPgColumn => invoices.id, {
-		onDelete: 'cascade',
-	}),
+	invoiceId: uuid('invoice_id')
+		.references((): AnyPgColumn => invoices.id, {
+			onDelete: 'cascade',
+		})
+		.notNull(),
 	amount: integer('amount').notNull(),
 	date: date('date').notNull(),
 	notes: text('notes'),

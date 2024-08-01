@@ -4,7 +4,7 @@ import db from '@/db';
 import { payments, Payment, InsertPayment } from '@/db/schemas/payments';
 import { Invoice, invoices } from '@/db/schemas/invoices';
 import { patients } from '@/db/schemas/patients';
-import { eq, getTableColumns, DrizzleError, sql } from 'drizzle-orm';
+import { eq, getTableColumns, DrizzleError, sql, desc } from 'drizzle-orm';
 import { ActionResponse } from '../types';
 import { revalidatePath } from 'next/cache';
 import {
@@ -15,6 +15,7 @@ import {
 	updatePaymentToDb,
 } from './utils';
 import { v4 as uuid } from 'uuid';
+import { takeUniqueOrThrow } from '@/db/utils';
 
 export const getPaymentById = async (id: Payment['id']) => {
 	try {
@@ -138,18 +139,12 @@ export async function addPayment(
 ): Promise<ActionResponse & { id?: Payment['id'] }> {
 	return new Promise(async (resolve, reject) => {
 		try {
-			if (data.updateInvoices) {
-				const unpaidInvoices = await checkPatientHasUnpaidInvoices(
-					data.patientId
-				);
+			const unpaidInvoices = await checkPatientHasUnpaidInvoices(
+				data.patientId
+			);
 
-				if (unpaidInvoices.length === 0) {
-					return {
-						message: 'No unpaid invoices found for the patient',
-					};
-				}
-
-				db.transaction(async (trx) => {
+			db.transaction(async (trx) => {
+				if (data.updateInvoices && unpaidInvoices.length > 0) {
 					await incrementInvoicePaymentForPatient(
 						{
 							paymentInfo: data,
@@ -157,40 +152,57 @@ export async function addPayment(
 						},
 						trx
 					);
+				}
 
-					const response = await addPaymentToDb(
-						{ data, invoiceId: unpaidInvoices[0].id },
-						trx
-					);
+				let latestUnpaidInvoice: Invoice | null = null;
+				if (unpaidInvoices.length === 0) {
+					latestUnpaidInvoice = await trx
+						.select()
+						.from(invoices)
+						.where(eq(invoices.patientId, data.patientId))
+						.orderBy(desc(invoices.dueDate))
+						.limit(1)
+						.then(takeUniqueOrThrow);
+				}
 
-					if (!response[0]?.insertedId) {
-						trx.rollback();
-						resolve({
-							message: 'Error adding payment. Please try again.',
-						});
-					}
+				const response = await addPaymentToDb(
+					{
+						data,
+						invoiceId: latestUnpaidInvoice?.id
+							? latestUnpaidInvoice.id
+							: unpaidInvoices[0].id,
+					},
+					trx
+				);
 
-					revalidatePath('/dashboard/payments');
-					revalidatePath('/dashboard');
-					resolve({
-						message: 'Payment added successfully',
-						id: response[0].insertedId,
-					});
-				});
-			} else {
-				const response = await addPaymentToDb({ data });
 				if (!response[0]?.insertedId) {
+					trx.rollback();
 					resolve({
 						message: 'Error adding payment. Please try again.',
 					});
 				}
+
 				revalidatePath('/dashboard/payments');
 				revalidatePath('/dashboard');
 				resolve({
 					message: 'Payment added successfully',
 					id: response[0].insertedId,
 				});
-			}
+			});
+			// else {
+			// 	const response = await addPaymentToDb({ data });
+			// 	if (!response[0]?.insertedId) {
+			// 		resolve({
+			// 			message: 'Error adding payment. Please try again.',
+			// 		});
+			// 	}
+			// 	revalidatePath('/dashboard/payments');
+			// 	revalidatePath('/dashboard');
+			// 	resolve({
+			// 		message: 'Payment added successfully',
+			// 		id: response[0].insertedId,
+			// 	});
+			// }
 		} catch (error) {
 			if (error instanceof DrizzleError) {
 				reject({ message: error.message });

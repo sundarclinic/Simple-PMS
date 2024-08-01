@@ -32,7 +32,12 @@ const Header: React.FC<Props> = ({ invoice, handlePrint }) => {
 			<div className='flex flex-row items-start gap-2'>
 				<section className='grid gap-0.5'>
 					<CardTitle className='group flex flex-col text-lg'>
-						<span>Invoice</span>
+						<span>
+							<span className='hidden print:inline'>
+								Sundar Clinic -{' '}
+							</span>
+							Invoice
+						</span>
 						<div className='flex gap-2 items-center'>
 							<span className='text-xs font-normal'>
 								{invoice.invoice.id}

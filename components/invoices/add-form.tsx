@@ -35,6 +35,7 @@ const InvoicesAddForm = () => {
 				paidAmount: 0,
 				dueDate: new Date(),
 				patientId: null,
+				title: '',
 			};
 		},
 	});

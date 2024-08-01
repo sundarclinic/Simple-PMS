@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+// import { headers } from 'next/headers';
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -31,3 +32,13 @@ export const currencyFormatter = (amount: number) => {
 export function sleep(ms: number) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
 }
+
+// export function getIp(): string | null {
+// 	let forwardedFor = headers().get('x-forwarded-for');
+// 	let realIp = headers().get('x-real-ip');
+// 	if (forwardedFor) {
+// 		return forwardedFor.split(',')[0].trim();
+// 	}
+// 	if (realIp) return realIp.trim();
+// 	return null;
+// }

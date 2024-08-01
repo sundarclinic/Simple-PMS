@@ -1,7 +1,7 @@
 import db from '@/db';
 import { invoices } from '@/db/schemas/invoices';
 import { payments } from '@/db/schemas/payments';
-import { sql, lte, and, gte, count } from 'drizzle-orm';
+import { sql, lte, and, gte, count, not } from 'drizzle-orm';
 
 export const getDashboardInsights = async () => {
 	try {
@@ -42,7 +42,13 @@ export const getDashboardInsights = async () => {
 			.where(
 				and(
 					lte(invoices.dueDate, new Date().toDateString()),
-					gte(invoices.paidAmount, invoices.amount)
+					gte(
+						invoices.dueDate,
+						new Date(
+							new Date().setDate(new Date().getDate() - 7)
+						).toDateString()
+					),
+					not(gte(invoices.paidAmount, invoices.amount))
 				)
 			);
 		const lastWeekOverdueInvoices = await db
@@ -50,17 +56,18 @@ export const getDashboardInsights = async () => {
 			.from(invoices)
 			.where(
 				and(
-					lte(invoices.dueDate, new Date().toDateString()),
-					and(
-						gte(
-							invoices.createdAt,
-							new Date(
-								new Date().setDate(new Date().getDate() - 7)
-							)
-						),
-						lte(invoices.createdAt, new Date()),
-						gte(invoices.paidAmount, invoices.amount)
-					)
+					lte(
+						invoices.dueDate,
+						new Date(
+							new Date().setDate(new Date().getDate() - 7)
+						).toDateString()
+					),
+					gte(
+						invoices.createdAt,
+						new Date(new Date().setDate(new Date().getDate() - 14))
+					),
+					lte(invoices.createdAt, new Date()),
+					not(gte(invoices.paidAmount, invoices.amount))
 				)
 			);
 		const overdueInvoicesDifference =
@@ -77,10 +84,12 @@ export const getDashboardInsights = async () => {
 			.where(
 				and(
 					gte(
-						payments.createdAt,
-						new Date(new Date().setDate(new Date().getDate() - 7))
+						payments.date,
+						new Date(
+							new Date().setDate(new Date().getDate() - 7)
+						).toDateString()
 					),
-					lte(payments.createdAt, new Date())
+					lte(payments.date, new Date().toDateString())
 				)
 			);
 		const totalPaymentsReceivedLastWeek = await db
@@ -91,12 +100,16 @@ export const getDashboardInsights = async () => {
 			.where(
 				and(
 					gte(
-						payments.createdAt,
-						new Date(new Date().setDate(new Date().getDate() - 14))
+						payments.date,
+						new Date(
+							new Date().setDate(new Date().getDate() - 14)
+						).toDateString()
 					),
 					lte(
-						payments.createdAt,
-						new Date(new Date().setDate(new Date().getDate() - 7))
+						payments.date,
+						new Date(
+							new Date().setDate(new Date().getDate() - 7)
+						).toDateString()
 					)
 				)
 			);

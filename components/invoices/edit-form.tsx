@@ -65,6 +65,7 @@ const InvoicesEditForm: React.FC<Props> = ({ invoice }) => {
 					: new Date(),
 				patientId: invoice?.invoice.patientId || undefined,
 				notes: invoice?.invoice.notes || undefined,
+				title: invoice?.invoice.title || '',
 			});
 		}
 	}, [invoice]);

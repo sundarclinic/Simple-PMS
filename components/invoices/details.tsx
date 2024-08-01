@@ -36,6 +36,23 @@ export default function InvoiceDetails() {
 				<div className='grid gap-6'>
 					<FormField
 						control={control}
+						name='title'
+						disabled={isSubmitting}
+						render={({ field }) => (
+							<FormItem className='grid gap-3'>
+								<FormLabel>Title</FormLabel>
+								<FormControl>
+									<Input
+										placeholder='eg: Cold Medicine, Consultation, etc...'
+										{...field}
+									/>
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+					<FormField
+						control={control}
 						name='amount'
 						disabled={isSubmitting}
 						render={({ field }) => (

@@ -13,6 +13,7 @@ import { patients } from './patients';
 
 export const invoices = pgTable('invoices', {
 	id: uuid('id').primaryKey(),
+	title: text('title').notNull(),
 	patientId: uuid('patient_id')
 		.notNull()
 		.references((): AnyPgColumn => patients.id, { onDelete: 'cascade' }),
@@ -33,6 +34,11 @@ export const insertInvoice = createInsertSchema(invoices)
 	.merge(
 		z.object({
 			id: z.string().uuid(),
+			title: z
+				.string({
+					message: 'Title is required for the invoice.',
+				})
+				.min(1),
 			patientId: z
 				.string({
 					message:

@@ -9,7 +9,10 @@ import {
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema } from 'drizzle-zod';
 import z from 'zod';
+import { relations } from 'drizzle-orm';
+
 import { patients } from './patients';
+import { payments } from './payments';
 
 export const invoices = pgTable('invoices', {
 	id: uuid('id').primaryKey(),
@@ -69,3 +72,11 @@ export const insertInvoice = createInsertSchema(invoices)
 export type Invoice = typeof invoices.$inferSelect;
 export type InsertInvoiceToDb = typeof invoices.$inferInsert;
 export type InsertInvoice = z.infer<typeof insertInvoice>;
+
+export const invoiceRelations = relations(invoices, ({ one, many }) => ({
+	payments: many(payments),
+	patient: one(patients, {
+		fields: [invoices.patientId],
+		references: [patients.id],
+	}),
+}));

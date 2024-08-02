@@ -9,15 +9,18 @@ import {
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema } from 'drizzle-zod';
 import z from 'zod';
+import { relations } from 'drizzle-orm';
+
 import { invoices } from './invoices';
 import { patients } from './patients';
 
 export const payments = pgTable('payments', {
 	id: uuid('id').primaryKey(),
-	invoiceId: uuid('invoice_id')
-		.references((): AnyPgColumn => invoices.id, {
-			onDelete: 'cascade',
-		})
+	invoiceId: uuid('invoice_id').references((): AnyPgColumn => invoices.id, {
+		onDelete: 'cascade',
+	}),
+	patientId: uuid('patient_id')
+		.references((): AnyPgColumn => patients.id, { onDelete: 'cascade' })
 		.notNull(),
 	amount: integer('amount').notNull(),
 	date: date('date').notNull(),
@@ -31,7 +34,6 @@ export const insertPayment = createInsertSchema(payments)
 		id: true,
 		createdAt: true,
 		updatedAt: true,
-		invoiceId: true,
 	})
 	.merge(
 		z.object({
@@ -45,6 +47,13 @@ export const insertPayment = createInsertSchema(payments)
 						'Patient is required to be associated with the payment.',
 				})
 				.uuid(),
+			invoiceId: z
+				.string({
+					message:
+						'Invoice is required to be associated with the payment.',
+				})
+				.uuid()
+				.optional(),
 			date: z.date({ message: 'Date is required for the payment.' }),
 			notes: z
 				.string()
@@ -61,3 +70,14 @@ export const insertPayment = createInsertSchema(payments)
 export type Payment = typeof payments.$inferSelect;
 export type InsertPaymentToDb = typeof payments.$inferInsert;
 export type InsertPayment = z.infer<typeof insertPayment>;
+
+export const paymentRelations = relations(payments, ({ one }) => ({
+	invoice: one(invoices, {
+		fields: [payments.invoiceId],
+		references: [invoices.id],
+	}),
+	patient: one(patients, {
+		fields: [payments.patientId],
+		references: [patients.id],
+	}),
+}));

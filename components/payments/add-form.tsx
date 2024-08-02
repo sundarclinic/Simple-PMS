@@ -9,10 +9,10 @@ import { ChevronLeft } from 'lucide-react';
 import { Form } from '@/components/ui/form';
 
 import SelectPatient from './select-patient';
+import SelectInvoice from './select-invoice';
 import PaymentDetails from './details';
 import PaymentNotes from './notes';
 import PaymentDate from './date';
-import UpdatePaymentInvoice from './change-invoice';
 
 import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -34,7 +34,7 @@ const PaymentAddForm = () => {
 				amount: 0,
 				date: new Date(),
 				patientId: null,
-				updateInvoices: true,
+				invoiceId: null,
 			};
 		},
 	});
@@ -45,13 +45,13 @@ const PaymentAddForm = () => {
 	const onSubmit = async (values: InsertPayment) => {
 		try {
 			console.log(values);
-			const { message, id } = await addPayment(values);
-			if (message === 'Payment added successfully') {
-				toast.success(message);
-				router.push(`/dashboard/payments`);
-			} else {
-				toast.error(message);
-			}
+			// const { message, id } = await addPayment(values);
+			// if (message === 'Payment added successfully') {
+			// 	toast.success(message);
+			// 	router.push(`/dashboard/payments`);
+			// } else {
+			// 	toast.error(message);
+			// }
 		} catch (error) {
 			toast.error('Error adding invoice. Please try again.');
 		}
@@ -94,12 +94,12 @@ const PaymentAddForm = () => {
 				<div className='grid gap-4 md:grid-cols-[1fr_250px] lg:grid-cols-3 lg:gap-8'>
 					<div className='grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8'>
 						<SelectPatient />
+						<SelectInvoice />
 						<PaymentDetails />
-						<PaymentNotes />
 					</div>
 					<div className='grid auto-rows-max items-start gap-4 lg:gap-8'>
 						<PaymentDate />
-						<UpdatePaymentInvoice />
+						<PaymentNotes />
 					</div>
 				</div>
 				<div className='flex items-center justify-center gap-2 md:hidden'>

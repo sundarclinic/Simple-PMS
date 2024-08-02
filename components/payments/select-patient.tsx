@@ -176,6 +176,7 @@ const SelectPatient: React.FC<Props> = ({ payment }) => {
 												<Button
 													type='button'
 													variant='outline'
+													disabled={isSubmitting}
 													className={cn(
 														'w-full justify-start',
 														{

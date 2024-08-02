@@ -8,6 +8,10 @@ import {
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema } from 'drizzle-zod';
 import z from 'zod';
+import { relations } from 'drizzle-orm';
+
+import { invoices } from './invoices';
+import { payments } from './payments';
 
 export const patients = pgTable('paitents', {
 	id: uuid('id').primaryKey(),
@@ -90,3 +94,8 @@ export const insertPatient = createInsertSchema(patients)
 export type Patient = typeof patients.$inferSelect;
 export type InsertPatientToDb = typeof patients.$inferInsert;
 export type InsertPatient = z.infer<typeof insertPatient>;
+
+export const patientRelations = relations(patients, ({ many }) => ({
+	invoices: many(invoices),
+	payments: many(payments),
+}));

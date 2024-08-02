@@ -9,11 +9,11 @@ import { ChevronLeft } from 'lucide-react';
 import { Form } from '@/components/ui/form';
 
 import SelectPatient from './select-patient';
+import SelectInvoice from './select-invoice';
 import PaymentDetails from './details';
 import PaymentNotes from './notes';
 import PaymentDueDate from './date';
 import DeletePayment from './delete';
-import UpdatePaymentInvoice from './change-invoice';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -54,7 +54,6 @@ const PaymentEditForm: React.FC<Props> = ({ payment }) => {
 				date: payment?.date ? new Date(payment?.date) : new Date(),
 				patientId: payment?.patient.id || undefined,
 				notes: payment?.notes || undefined,
-				updateInvoices: true,
 			});
 		}
 	}, [payment]);
@@ -62,12 +61,12 @@ const PaymentEditForm: React.FC<Props> = ({ payment }) => {
 	const onSubmit = async (values: InsertPayment) => {
 		try {
 			console.log(values);
-			const { message } = await editPayment(values);
-			if (message === 'Payment edited successfully') {
-				toast.success(message);
-			} else {
-				toast.error(message);
-			}
+			// const { message } = await editPayment(values);
+			// if (message === 'Payment edited successfully') {
+			// 	toast.success(message);
+			// } else {
+			// 	toast.error(message);
+			// }
 		} catch (error) {
 			toast.error('Error editing payment. Please try again.');
 		}
@@ -110,12 +109,12 @@ const PaymentEditForm: React.FC<Props> = ({ payment }) => {
 				<div className='grid gap-4 md:grid-cols-[1fr_250px] lg:grid-cols-3 lg:gap-8'>
 					<div className='grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8'>
 						<SelectPatient payment={payment} />
+						<SelectInvoice payment={payment} />
 						<PaymentDetails />
-						<PaymentNotes />
 					</div>
 					<div className='grid auto-rows-max items-start gap-4 lg:gap-8'>
 						<PaymentDueDate />
-						<UpdatePaymentInvoice />
+						<PaymentNotes />
 						<DeletePayment payment={payment} />
 					</div>
 				</div>

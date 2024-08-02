@@ -7,9 +7,16 @@ import {
 	InsertInvoice,
 	InsertInvoiceToDb,
 } from '@/db/schemas/invoices';
-import { desc, DrizzleError, eq, getTableColumns } from 'drizzle-orm';
+import {
+	and,
+	desc,
+	DrizzleError,
+	eq,
+	getTableColumns,
+	ilike,
+} from 'drizzle-orm';
 import { ActionResponse } from '@/lib/types';
-import { patients } from '@/db/schemas/patients';
+import { Patient, patients } from '@/db/schemas/patients';
 import { revalidatePath } from 'next/cache';
 
 export const getInvoiceById = async (id: Invoice['id']) => {
@@ -67,6 +74,32 @@ export const getPatientInvoices = async (patientId: string) => {
 			.where(eq(invoices.patientId, patientId))
 			.leftJoin(patients, eq(invoices.patientId, patients.id));
 		return allInvoices;
+	} catch (error) {
+		console.log(error);
+		return [];
+	}
+};
+
+export const getInvoicesByTitleForPatient = async ({
+	title,
+	patientId,
+}: {
+	title: Invoice['title'];
+	patientId: Patient['id'];
+}) => {
+	try {
+		if (!title) return [];
+		const results = await db
+			.select()
+			.from(invoices)
+			.where(
+				and(
+					eq(patients.id, patientId),
+					ilike(invoices.title, `%${title}%`)
+				)
+			);
+		if (results.length === 0) return null;
+		return results;
 	} catch (error) {
 		console.log(error);
 		return [];

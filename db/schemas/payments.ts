@@ -63,7 +63,6 @@ export const insertPayment = createInsertSchema(payments)
 					if (v === undefined || v === '') return null;
 					return v;
 				}),
-			updateInvoices: z.boolean().default(false),
 		})
 	);
 

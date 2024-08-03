@@ -139,70 +139,68 @@ export async function addPayment(
 ): Promise<ActionResponse & { id?: Payment['id'] }> {
 	return new Promise(async (resolve, reject) => {
 		try {
-			const unpaidInvoices = await checkPatientHasUnpaidInvoices(
-				data.patientId
-			);
-
 			db.transaction(async (trx) => {
-				if (data.updateInvoices && unpaidInvoices.length > 0) {
-					await incrementInvoicePaymentForPatient(
-						{
-							paymentInfo: data,
-							unpaidInvoices,
-						},
-						trx
+				try {
+					if (data.invoiceId) {
+						const invoice = await db
+							.select()
+							.from(invoices)
+							.where(eq(invoices.id, data.invoiceId))
+							.then(takeUniqueOrThrow);
+
+						const balance = invoice.amount - invoice.paidAmount;
+
+						if (data.amount > balance) {
+							return resolve({
+								message: `Amount exceeds the balance of the invoice. Balance: ${balance}`,
+							});
+						}
+
+						const updatedInvoice = await trx
+							.update(invoices)
+							.set({
+								paidAmount: invoice.paidAmount + data.amount,
+							})
+							.where(eq(invoices.id, data.invoiceId))
+							.returning({ updatedId: invoices.id })
+							.then(takeUniqueOrThrow);
+
+						if (!updatedInvoice.updatedId) {
+							trx.rollback();
+							return resolve({
+								message:
+									'Error adding payment. Please try again.',
+							});
+						}
+					}
+
+					const response = await addPaymentToDb(data, trx).then(
+						takeUniqueOrThrow
 					);
-				}
 
-				let latestUnpaidInvoice: Invoice | null = null;
-				if (unpaidInvoices.length === 0) {
-					latestUnpaidInvoice = await trx
-						.select()
-						.from(invoices)
-						.where(eq(invoices.patientId, data.patientId))
-						.orderBy(desc(invoices.dueDate))
-						.limit(1)
-						.then(takeUniqueOrThrow);
-				}
+					if (!response.insertedId) {
+						trx.rollback();
+						return resolve({
+							message: 'Error adding payment. Please try again.',
+						});
+					}
 
-				const response = await addPaymentToDb(
-					{
-						data,
-						invoiceId: latestUnpaidInvoice?.id
-							? latestUnpaidInvoice.id
-							: unpaidInvoices[0].id,
-					},
-					trx
-				);
-
-				if (!response[0]?.insertedId) {
-					trx.rollback();
-					resolve({
-						message: 'Error adding payment. Please try again.',
+					revalidatePath('/dashboard/payments');
+					revalidatePath('/dashboard');
+					return resolve({
+						message: 'Payment added successfully',
+						id: response.insertedId,
 					});
+				} catch (error) {
+					if (error instanceof DrizzleError) {
+						reject({ message: error.message });
+					} else {
+						reject({
+							message: 'Error adding payment. Please try again.',
+						});
+					}
 				}
-
-				revalidatePath('/dashboard/payments');
-				revalidatePath('/dashboard');
-				resolve({
-					message: 'Payment added successfully',
-					id: response[0].insertedId,
-				});
 			});
-			// else {
-			// 	const response = await addPaymentToDb({ data });
-			// 	if (!response[0]?.insertedId) {
-			// 		resolve({
-			// 			message: 'Error adding payment. Please try again.',
-			// 		});
-			// 	}
-			// 	revalidatePath('/dashboard/payments');
-			// 	revalidatePath('/dashboard');
-			// 	resolve({
-			// 		message: 'Payment added successfully',
-			// 		id: response[0].insertedId,
-			// 	});
-			// }
 		} catch (error) {
 			if (error instanceof DrizzleError) {
 				reject({ message: error.message });

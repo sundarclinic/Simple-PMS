@@ -53,6 +53,7 @@ export const insertPayment = createInsertSchema(payments)
 						'Invoice is required to be associated with the payment.',
 				})
 				.uuid()
+				.nullable()
 				.optional(),
 			date: z.date({ message: 'Date is required for the payment.' }),
 			notes: z

@@ -13,7 +13,10 @@ import {
 	DrizzleError,
 	eq,
 	getTableColumns,
+	gte,
 	ilike,
+	lte,
+	not,
 } from 'drizzle-orm';
 import { ActionResponse } from '@/lib/types';
 import { Patient, patients } from '@/db/schemas/patients';
@@ -94,8 +97,9 @@ export const getInvoicesByTitleForPatient = async ({
 			.from(invoices)
 			.where(
 				and(
-					eq(patients.id, patientId),
-					ilike(invoices.title, `%${title}%`)
+					eq(invoices.patientId, patientId),
+					ilike(invoices.title, `%${title}%`),
+					not(eq(invoices.paidAmount, invoices.amount))
 				)
 			);
 		if (results.length === 0) return null;

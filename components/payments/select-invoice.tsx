@@ -24,6 +24,7 @@ import {
 	FormMessage,
 } from '@/components/ui/form';
 import BounceLoader from '../ui/bounce-loader';
+import { Badge } from '@/components/ui/badge';
 
 import { useSearchParams } from 'next/navigation';
 import { useFormContext } from 'react-hook-form';
@@ -31,7 +32,7 @@ import { InsertPayment, Payment } from '@/db/schemas/payments';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useDebounce } from '@/hooks/use-debounce';
 import { Patient } from '@/db/schemas/patients';
-import { cn } from '@/lib/utils';
+import { capitalize, cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { usePathname } from 'next/navigation';
 import { Invoice } from '@/db/schemas/invoices';
@@ -40,6 +41,7 @@ import {
 	getInvoicesByTitleForPatient,
 } from '@/lib/invoices/actions';
 import { ReceiptText } from 'lucide-react';
+import { getInvoiceStatus } from '@/lib/invoices/utils';
 
 interface Props
 	extends React.HTMLAttributes<React.ComponentPropsWithoutRef<typeof Card>> {
@@ -135,7 +137,9 @@ const SelectInvoice: React.FC<Props> = ({ payment }) => {
 									</div>
 									<p className='text-xs text-muted-foreground mt-2'>
 										(Patient must be selected first, and
-										then an invoice can be selected.)
+										then an invoice can be selected. Only
+										unpaid or partially paid invoices are
+										shown.)
 									</p>
 								</FormLabel>
 								<FormControl>
@@ -243,17 +247,45 @@ const SelectInvoice: React.FC<Props> = ({ payment }) => {
 export default SelectInvoice;
 
 function TriggerButtonContent({ invoice }: { invoice: Invoice | null }) {
-	return invoice ? (
-		<>
-			<ReceiptText />
-			<div>
-				<div className='font-semibold'>{invoice.title}</div>
-				<div className='text-muted-foreground'>{invoice.amount}</div>
-			</div>
-		</>
-	) : (
-		<>+ Select Invoice</>
-	);
+	if (invoice) {
+		const status = getInvoiceStatus(invoice);
+
+		return (
+			<>
+				<ReceiptText />
+				<div>
+					<div className='font-semibold flex items-center gap-2'>
+						<span>{invoice.title}</span>
+						<Badge
+							variant='outline'
+							className={cn('text-white text-xs', {
+								'bg-red-500': status === 'unpaid',
+								'bg-green-500': status === 'paid',
+								'bg-orange-500': status === 'partially-paid',
+							})}
+						>
+							{capitalize(status)}
+						</Badge>
+					</div>
+					<div className='flex items-center gap-1 flex-wrap'>
+						<span className='text-muted-foreground'>
+							{invoice.amount} (Amount)
+						</span>
+						|
+						<span className='text-muted-foreground'>
+							{invoice.paidAmount} (Paid Amount)
+						</span>
+						|
+						<span className='text-muted-foreground'>
+							{invoice.amount - invoice.paidAmount} (Balance)
+						</span>
+					</div>
+				</div>
+			</>
+		);
+	}
+
+	return <>+ Select Invoice</>;
 }
 
 function StatusList({
@@ -307,28 +339,62 @@ function StatusList({
 							No invoices found. Try a different search term.
 						</CommandEmpty>
 					) : (
-						invoices.map((invoice) => (
-							<CommandItem
-								key={invoice.id}
-								value={invoice.id}
-								onSelect={(value) => {
-									setSelectedInvoice(invoice);
-									setSelectedInvoiceId(value);
-									setOpen(false);
-								}}
-								className='flex items-center gap-4 cursor-pointer'
-							>
-								<ReceiptText />
-								<div>
-									<div className='font-semibold'>
-										{invoice.title}
+						invoices.map((invoice) => {
+							const status = getInvoiceStatus(invoice);
+
+							return (
+								<CommandItem
+									key={invoice.id}
+									value={invoice.id}
+									onSelect={(value) => {
+										setSelectedInvoice(invoice);
+										setSelectedInvoiceId(value);
+										setOpen(false);
+									}}
+									className='flex items-center gap-4 cursor-pointer'
+								>
+									<ReceiptText />
+									<div>
+										<div className='font-semibold flex items-center gap-2'>
+											<span>{invoice.title}</span>
+											<Badge
+												variant='outline'
+												className={cn(
+													'text-white text-xs',
+													{
+														'bg-red-500':
+															status === 'unpaid',
+														'bg-green-500':
+															status === 'paid',
+														'bg-orange-500':
+															status ===
+															'partially-paid',
+													}
+												)}
+											>
+												{capitalize(status)}
+											</Badge>
+										</div>
+										<div className='flex items-center flex-wrap gap-1'>
+											<span className='text-muted-foreground'>
+												{invoice.amount} (Amount)
+											</span>
+											|
+											<span className='text-muted-foreground'>
+												{invoice.paidAmount} (Paid
+												Amount)
+											</span>
+											|
+											<span className='text-muted-foreground'>
+												{invoice.amount -
+													invoice.paidAmount}{' '}
+												(Balance)
+											</span>
+										</div>
 									</div>
-									<div className='text-muted-foreground'>
-										{invoice.amount}
-									</div>
-								</div>
-							</CommandItem>
-						))
+								</CommandItem>
+							);
+						})
 					)}
 				</CommandGroup>
 			</CommandList>

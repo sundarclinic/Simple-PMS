@@ -12,34 +12,23 @@ type IncrementInvoicePaymentForPatientArgs = {
 	paymentInfo: InsertPayment;
 };
 
-type PaymentToDbArgs = {
-	invoiceId?: string | null;
-	data: InsertPayment;
-};
-
-export async function addPaymentToDb(
-	{ invoiceId, data }: PaymentToDbArgs,
-	trx = db
-) {
+export async function addPaymentToDb(data: InsertPayment, trx = db) {
 	return await trx
 		.insert(payments)
 		.values({
 			...data,
-			invoiceId,
 			date: new Date(data.date).toDateString(),
+			createdAt: new Date(),
+			updatedAt: new Date(),
 		} as InsertPaymentToDb)
 		.returning({ insertedId: payments.id });
 }
 
-export async function updatePaymentToDb(
-	{ data, invoiceId }: PaymentToDbArgs,
-	trx = db
-) {
+export async function updatePaymentToDb(data: InsertPayment, trx = db) {
 	return await trx
 		.update(payments)
 		.set({
 			...data,
-			...(invoiceId && { invoiceId }),
 			date: new Date(data.date).toDateString(),
 			updatedAt: new Date(),
 		} as InsertPaymentToDb)

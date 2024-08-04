@@ -46,14 +46,15 @@ export const paymentColumns: ColumnDef<PaymentTableProps>[] = [
 		accessorKey: 'invoiceId',
 		header: 'Linked Invoice',
 		cell: ({ row }) => {
-			const { invoiceId } = row.original;
+			const { invoiceId, invoice } = row.original;
 			return invoiceId ? (
 				<Link
 					href={`/dashboard/invoices/${invoiceId}`}
-					className='text-blue-500 hover:underline flex items-center group w-fit'
+					className='text-blue-500 hover:underline flex items-center group w-fit gap-1'
+					title={invoice.title}
 				>
 					<span className='max-w-[8ch] text-ellipsis whitespace-nowrap overflow-hidden block'>
-						{invoiceId}
+						{invoice.title}
 					</span>
 					<ExternalLink className='h-4 w-4 inline shrink-0 group-hover:scale-105 transition-all duration-300' />
 				</Link>

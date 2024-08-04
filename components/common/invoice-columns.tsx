@@ -88,6 +88,9 @@ export const invoiceColumns: ColumnDef<InvoicesTableProps>[] = [
 			const { id, patientId } = row.original;
 			const pathname = usePathname();
 			const isDashboard = pathname === '/dashboard';
+
+			const status = getInvoiceStatus(row.original);
+
 			return (
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
@@ -118,9 +121,14 @@ export const invoiceColumns: ColumnDef<InvoicesTableProps>[] = [
 								Edit
 							</Link>
 						</DropdownMenuItem>
-						<DropdownMenuItem asChild className='cursor-pointer'>
+						<DropdownMenuItem
+							asChild
+							className={cn('cursor-pointer', {
+								hidden: status === 'paid',
+							})}
+						>
 							<Link
-								href={`/dashboard/payments/edit?patientId=${patientId}`}
+								href={`/dashboard/payments/edit?patientId=${patientId}&invoiceId=${id}`}
 							>
 								Add Payment
 							</Link>

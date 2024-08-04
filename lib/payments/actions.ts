@@ -19,19 +19,14 @@ import { takeUniqueOrThrow } from '@/db/utils';
 
 export const getPaymentById = async (id: Payment['id']) => {
 	try {
-		const paymentColumns = getTableColumns(payments);
-		const result = await db
-			.select({
-				invoice: invoices,
-				patient: patients,
-				...paymentColumns,
-			})
-			.from(payments)
-			.where(eq(payments.id, id))
-			.leftJoin(invoices, eq(payments.invoiceId, invoices.id))
-			.leftJoin(patients, eq(invoices.patientId, patients.id));
-		if (result.length === 0) return null;
-		return result[0];
+		const payment = await db.query.payments.findFirst({
+			where: (payments, { eq }) => eq(payments.id, id),
+			with: {
+				invoice: true,
+				patient: true,
+			},
+		});
+		return payment;
 	} catch (error) {
 		console.log(error);
 		return null;
@@ -40,16 +35,13 @@ export const getPaymentById = async (id: Payment['id']) => {
 
 export const getPayments = async () => {
 	try {
-		const paymentColumns = getTableColumns(payments);
-		const allPayments = await db
-			.select({
-				invoice: invoices,
-				patient: patients,
-				...paymentColumns,
-			})
-			.from(payments)
-			.leftJoin(invoices, eq(payments.invoiceId, invoices.id))
-			.leftJoin(patients, eq(invoices.patientId, patients.id));
+		const allPayments = await db.query.payments.findMany({
+			with: {
+				invoice: true,
+				patient: true,
+			},
+			orderBy: (payments, { desc }) => desc(payments.date),
+		});
 		return allPayments;
 	} catch (error) {
 		console.log(error);
@@ -59,17 +51,13 @@ export const getPayments = async () => {
 
 export const getPatientPayments = async (patientId: string) => {
 	try {
-		const paymentColumns = getTableColumns(payments);
-		const allPayments = await db
-			.select({
-				invoice: invoices,
-				patient: patients,
-				...paymentColumns,
-			})
-			.from(payments)
-			.where(eq(invoices.patientId, patientId))
-			.leftJoin(invoices, eq(payments.invoiceId, invoices.id))
-			.leftJoin(patients, eq(invoices.patientId, patients.id));
+		const allPayments = await db.query.payments.findMany({
+			where: (payments, { eq }) => eq(payments.patientId, patientId),
+			with: {
+				invoice: true,
+				patient: true,
+			},
+		});
 		return allPayments;
 	} catch (error) {
 		console.log(error);

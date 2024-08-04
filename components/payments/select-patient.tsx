@@ -26,7 +26,7 @@ import {
 } from '@/components/ui/form';
 import BounceLoader from '../ui/bounce-loader';
 
-import { useSearchParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import { useFormContext } from 'react-hook-form';
 import { InsertPayment, Payment } from '@/db/schemas/payments';
 import { useMediaQuery } from '@/hooks/use-media-query';
@@ -57,6 +57,7 @@ const SelectPatient: React.FC<Props> = ({ payment }) => {
 	} = useFormContext<InsertPayment>();
 	const searchParams = useSearchParams();
 	const pathname = usePathname();
+	const params = useParams() as { id?: string | undefined };
 
 	useEffect(() => {
 		if (payment) {
@@ -98,6 +99,9 @@ const SelectPatient: React.FC<Props> = ({ payment }) => {
 		window.history.replaceState(null, '', pathname);
 	};
 
+	const isPaymentEditPage =
+		pathname.includes('edit') && params.id !== undefined;
+
 	return (
 		<Card>
 			<CardHeader>
@@ -112,17 +116,26 @@ const SelectPatient: React.FC<Props> = ({ payment }) => {
 						render={({ field }) => (
 							<FormItem className='grid gap-3'>
 								<FormLabel>
-									<span>Patient</span>
-									{field.value !== null ? (
-										<Button
-											disabled={isSubmitting}
-											type='button'
-											variant='link'
-											className='text-xs m-0 px-1.5 py-0 h-fit'
-											onClick={handleClearPatient}
-										>
-											Clear
-										</Button>
+									<div>
+										<span>Patient</span>
+										{field.value !== null &&
+										!isPaymentEditPage ? (
+											<Button
+												disabled={isSubmitting}
+												type='button'
+												variant='link'
+												className='text-xs m-0 px-1.5 py-0 h-fit'
+												onClick={handleClearPatient}
+											>
+												Clear
+											</Button>
+										) : null}
+									</div>
+									{isPaymentEditPage ? (
+										<p className='text-xs text-muted-foreground mt-2'>
+											(While editing a payment, you can't
+											change the linked patient)
+										</p>
 									) : null}
 								</FormLabel>
 								<FormControl>
@@ -133,7 +146,10 @@ const SelectPatient: React.FC<Props> = ({ payment }) => {
 										>
 											<PopoverTrigger asChild>
 												<Button
-													disabled={isSubmitting}
+													disabled={
+														isPaymentEditPage ||
+														isSubmitting
+													}
 													type='button'
 													variant='outline'
 													className={cn(
@@ -176,7 +192,10 @@ const SelectPatient: React.FC<Props> = ({ payment }) => {
 												<Button
 													type='button'
 													variant='outline'
-													disabled={isSubmitting}
+													disabled={
+														isPaymentEditPage ||
+														isSubmitting
+													}
 													className={cn(
 														'w-full justify-start',
 														{

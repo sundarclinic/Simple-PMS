@@ -54,19 +54,19 @@ const PaymentEditForm: React.FC<Props> = ({ payment }) => {
 				date: payment?.date ? new Date(payment?.date) : new Date(),
 				patientId: payment?.patient.id || undefined,
 				notes: payment?.notes || undefined,
+				invoiceId: payment?.invoice.id || undefined,
 			});
 		}
 	}, [payment]);
 
 	const onSubmit = async (values: InsertPayment) => {
 		try {
-			console.log(values);
-			// const { message } = await editPayment(values);
-			// if (message === 'Payment edited successfully') {
-			// 	toast.success(message);
-			// } else {
-			// 	toast.error(message);
-			// }
+			const { message } = await editPayment(values);
+			if (message === 'Payment edited successfully') {
+				toast.success(message);
+			} else {
+				toast.error(message);
+			}
 		} catch (error) {
 			toast.error('Error editing payment. Please try again.');
 		}

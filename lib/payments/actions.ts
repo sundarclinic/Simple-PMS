@@ -126,76 +126,67 @@ export async function addPayment(
 	data: InsertPayment
 ): Promise<ActionResponse & { id?: Payment['id'] }> {
 	return new Promise(async (resolve, reject) => {
-		try {
-			db.transaction(async (trx) => {
-				try {
-					if (data.invoiceId) {
-						const invoice = await db
-							.select()
-							.from(invoices)
-							.where(eq(invoices.id, data.invoiceId))
-							.then(takeUniqueOrThrow);
+		db.transaction(async (trx) => {
+			try {
+				if (data.invoiceId) {
+					const invoice = await db
+						.select()
+						.from(invoices)
+						.where(eq(invoices.id, data.invoiceId))
+						.then(takeUniqueOrThrow);
 
-						const balance = invoice.amount - invoice.paidAmount;
+					const balance = invoice.amount - invoice.paidAmount;
 
-						if (data.amount > balance) {
-							return resolve({
-								message: `Amount exceeds the balance of the invoice. Balance: ${balance}`,
-							});
-						}
-
-						const updatedInvoice = await trx
-							.update(invoices)
-							.set({
-								paidAmount: invoice.paidAmount + data.amount,
-							})
-							.where(eq(invoices.id, data.invoiceId))
-							.returning({ updatedId: invoices.id })
-							.then(takeUniqueOrThrow);
-
-						if (!updatedInvoice.updatedId) {
-							trx.rollback();
-							return resolve({
-								message:
-									'Error adding payment. Please try again.',
-							});
-						}
+					if (data.amount > balance) {
+						return resolve({
+							message: `Amount exceeds the balance of the invoice. Balance: ${balance}`,
+						});
 					}
 
-					const response = await addPaymentToDb(data, trx).then(
-						takeUniqueOrThrow
-					);
+					const updatedInvoice = await trx
+						.update(invoices)
+						.set({
+							paidAmount: invoice.paidAmount + data.amount,
+						})
+						.where(eq(invoices.id, data.invoiceId))
+						.returning({ updatedId: invoices.id })
+						.then(takeUniqueOrThrow);
 
-					if (!response.insertedId) {
+					if (!updatedInvoice.updatedId) {
 						trx.rollback();
 						return resolve({
 							message: 'Error adding payment. Please try again.',
 						});
 					}
-
-					revalidatePath('/dashboard/payments');
-					revalidatePath('/dashboard');
-					return resolve({
-						message: 'Payment added successfully',
-						id: response.insertedId,
-					});
-				} catch (error) {
-					if (error instanceof DrizzleError) {
-						reject({ message: error.message });
-					} else {
-						reject({
-							message: 'Error adding payment. Please try again.',
-						});
-					}
 				}
-			});
-		} catch (error) {
-			if (error instanceof DrizzleError) {
-				reject({ message: error.message });
-			} else {
-				reject({ message: 'Error adding payment. Please try again.' });
+
+				const response = await addPaymentToDb(data, trx).then(
+					takeUniqueOrThrow
+				);
+
+				if (!response.insertedId) {
+					trx.rollback();
+					return resolve({
+						message: 'Error adding payment. Please try again.',
+					});
+				}
+
+				revalidatePath('/dashboard/payments');
+				revalidatePath('/dashboard');
+				return resolve({
+					message: 'Payment added successfully',
+					id: response.insertedId,
+				});
+			} catch (error) {
+				if (error instanceof DrizzleError) {
+					reject({ message: error.message });
+				} else {
+					reject({
+						message: 'Error adding payment. Please try again.',
+					});
+				}
 			}
-		}
+		});
 	});
 }
 
@@ -203,161 +194,113 @@ export async function editPayment(
 	data: InsertPayment
 ): Promise<ActionResponse & { id?: Payment['id'] }> {
 	return new Promise(async (resolve, reject) => {
-		try {
-			if (data.updateInvoices) {
-				const unpaidInvoices = await checkPatientHasUnpaidInvoices(
-					data.patientId
-				);
+		db.transaction(async (trx) => {
+			try {
+				const previousPayment = await db.query.payments.findFirst({
+					where: (payments, { eq }) => eq(payments.id, data.id),
+					with: {
+						invoice: true,
+					},
+				});
 
-				if (unpaidInvoices.length === 0) {
-					resolve({
-						message: 'No unpaid invoices found for the patient',
+				if (!previousPayment) {
+					return resolve({ message: 'Payment not found' });
+				}
+
+				if (previousPayment.invoiceId !== data.invoiceId) {
+					return resolve({
+						message:
+							'Linked invoice to the payment cannot be changed',
 					});
 				}
 
-				const previousPayment = await getPaymentById(data.id);
-
-				if (previousPayment.patient.id !== data.id) {
-					// Patient Linked has been changed
-					db.transaction(async (trx) => {
-						await incrementInvoicePaymentForPatient(
-							{
-								paymentInfo: data,
-								unpaidInvoices,
-							},
-							trx
-						);
-
-						const response = await updatePaymentToDb(
-							{ data, invoiceId: unpaidInvoices[0].id },
-							trx
-						);
-
-						if (!response[0]?.insertedId) {
-							trx.rollback();
-							resolve({
-								message:
-									'Error editing payment. Please try again.',
-							});
-						}
-
-						revalidatePath('/dashboard/payments');
-						revalidatePath('/dashboard');
-						resolve({
-							message: 'Payment edited successfully',
-							id: response[0].insertedId,
-						});
+				if (previousPayment.patientId !== data.patientId) {
+					return resolve({
+						message:
+							'Linked patient to the payment cannot be changed',
 					});
-				} else {
-					// Patient Remains the same, but he payment amount changes to be recorded
-					if (previousPayment.amount < data.amount) {
-						// Payment Incremented
-						db.transaction(async (trx) => {
-							await incrementInvoicePaymentForPatient(
-								{
-									paymentInfo: data,
-									unpaidInvoices,
-								},
-								trx
-							);
+				}
 
-							const response = await updatePaymentToDb(
-								{ data, invoiceId: unpaidInvoices[0].id },
-								trx
-							);
+				if (previousPayment.invoiceId === null) {
+					const response = await updatePaymentToDb(data, trx).then(
+						takeUniqueOrThrow
+					);
 
-							if (!response[0]?.insertedId) {
-								trx.rollback();
-								resolve({
-									message:
-										'Error editing payment. Please try again.',
-								});
-							}
-
-							revalidatePath('/dashboard/payments');
-							revalidatePath('/dashboard');
-							resolve({
-								message: 'Payment edited successfully',
-								id: response[0].insertedId,
-							});
-						});
-					} else if (previousPayment.amount > data.amount) {
-						// Payment Decremented
-						db.transaction(async (trx) => {
-							await decrementInvoicePaymentForPatient(
-								{
-									paymentInfo: data,
-									unpaidInvoices,
-								},
-								trx
-							);
-
-							const response = await updatePaymentToDb(
-								{ data, invoiceId: unpaidInvoices[0].id },
-								trx
-							);
-
-							if (!response[0]?.insertedId) {
-								trx.rollback();
-								resolve({
-									message:
-										'Error editing payment. Please try again.',
-								});
-							}
-
-							revalidatePath('/dashboard/payments');
-							revalidatePath('/dashboard');
-							resolve({
-								message: 'Payment edited successfully',
-								id: response[0].insertedId,
-							});
-						});
-					} else {
-						// No Change in Payment Amount
-						const result = await updatePaymentToDb({
-							data,
-						});
-
-						if (!result[0]?.insertedId) {
-							resolve({
-								message: 'Error editing payment',
-							});
-						}
-
-						revalidatePath('/dashboard/payments');
-						revalidatePath('/dashboard');
-						resolve({
-							message: 'Payment edited successfully',
-							id: result[0].insertedId,
+					if (!response.insertedId) {
+						trx.rollback();
+						return resolve({
+							message: 'Error editing payment. Please try again.',
 						});
 					}
-				}
-			} else {
-				const result = await updatePaymentToDb({
-					data,
-				});
 
-				if (!result[0]?.insertedId) {
+					revalidatePath('/dashboard/payments');
+					revalidatePath('/dashboard');
 					resolve({
-						message: 'Error editing payment',
+						message: 'Payment edited successfully',
+						id: response.insertedId,
+					});
+				} else {
+					const balance =
+						previousPayment.invoice.amount -
+						previousPayment.invoice.paidAmount;
+
+					if (balance === 0) {
+						return resolve({
+							message: 'Payment is already paid in full',
+						});
+					}
+
+					if (data.amount > balance) {
+						return resolve({
+							message: `Amount exceeds the balance of the invoice. Balance: ${balance}`,
+						});
+					}
+
+					const updatedInvoice = await trx
+						.update(invoices)
+						.set({
+							paidAmount: data.amount,
+						})
+						.where(eq(invoices.id, data.invoiceId))
+						.returning({ updatedId: invoices.id })
+						.then(takeUniqueOrThrow);
+
+					if (!updatedInvoice.updatedId) {
+						trx.rollback();
+						return resolve({
+							message: 'Error editing payment. Please try again.',
+						});
+					}
+
+					const response = await updatePaymentToDb(data, trx).then(
+						takeUniqueOrThrow
+					);
+
+					if (!response.insertedId) {
+						trx.rollback();
+						return resolve({
+							message: 'Error editing payment. Please try again.',
+						});
+					}
+
+					revalidatePath('/dashboard/payments');
+					revalidatePath('/dashboard');
+					return resolve({
+						message: 'Payment edited successfully',
+						id: response.insertedId,
 					});
 				}
-
-				revalidatePath('/dashboard/payments');
-				revalidatePath('/dashboard');
-				resolve({
-					message: 'Payment edited successfully',
-					id: result[0].insertedId,
-				});
+			} catch (error) {
+				console.log(error);
+				if (error instanceof DrizzleError) {
+					reject({ message: error.message });
+				} else {
+					reject({
+						message: 'Error editing payment. Please try again.',
+					});
+				}
 			}
-		} catch (error) {
-			console.log(error);
-			if (error instanceof DrizzleError) {
-				reject({ message: error.message });
-			} else {
-				reject({ message: 'Error editing payment. Please try again.' });
-			}
-		}
+		});
 	});
 }
 

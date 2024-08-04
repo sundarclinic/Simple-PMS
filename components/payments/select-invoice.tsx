@@ -26,7 +26,7 @@ import {
 import BounceLoader from '../ui/bounce-loader';
 import { Badge } from '@/components/ui/badge';
 
-import { useSearchParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import { useFormContext } from 'react-hook-form';
 import { InsertPayment, Payment } from '@/db/schemas/payments';
 import { useMediaQuery } from '@/hooks/use-media-query';
@@ -62,6 +62,7 @@ const SelectInvoice: React.FC<Props> = ({ payment }) => {
 	} = useFormContext<InsertPayment>();
 	const searchParams = useSearchParams();
 	const pathname = usePathname();
+	const params = useParams() as { id?: string | undefined };
 
 	const patientId = watch('patientId');
 
@@ -82,6 +83,13 @@ const SelectInvoice: React.FC<Props> = ({ payment }) => {
 			error: 'Error adding invoice to payment. Please try adding manually.',
 		});
 	}, [searchParams]);
+
+	useEffect(() => {
+		if (patientId && payment?.patientId !== patientId) {
+			setSelectedInvoice(null);
+			setValue('invoiceId', null);
+		}
+	}, [watch('patientId')]);
 
 	const handleGetInvoiceById = (
 		invoiceId: string
@@ -105,6 +113,9 @@ const SelectInvoice: React.FC<Props> = ({ payment }) => {
 		window.history.replaceState(null, '', pathname);
 	};
 
+	const isPaymentEditPage =
+		pathname.includes('edit') && params.id !== undefined;
+
 	return (
 		<Card>
 			<CardHeader>
@@ -121,7 +132,8 @@ const SelectInvoice: React.FC<Props> = ({ payment }) => {
 								<FormLabel>
 									<div>
 										<span>Invoice (Optional)</span>
-										{field.value !== null ? (
+										{field.value !== null &&
+										!isPaymentEditPage ? (
 											<Button
 												disabled={
 													!patientId || isSubmitting
@@ -136,10 +148,9 @@ const SelectInvoice: React.FC<Props> = ({ payment }) => {
 										) : null}
 									</div>
 									<p className='text-xs text-muted-foreground mt-2'>
-										(Patient must be selected first, and
-										then an invoice can be selected. Only
-										unpaid or partially paid invoices are
-										shown.)
+										{isPaymentEditPage
+											? "(While editing a payment, you can't change the linked invoice)"
+											: '(Patient must be selected first, and then an invoice can be selected. Only unpaid or partially paid invoices are shown.)'}
 									</p>
 								</FormLabel>
 								<FormControl>
@@ -151,6 +162,7 @@ const SelectInvoice: React.FC<Props> = ({ payment }) => {
 											<PopoverTrigger asChild>
 												<Button
 													disabled={
+														isPaymentEditPage ||
 														!patientId ||
 														isSubmitting
 													}
@@ -196,6 +208,7 @@ const SelectInvoice: React.FC<Props> = ({ payment }) => {
 											<DrawerTrigger asChild>
 												<Button
 													disabled={
+														isPaymentEditPage ||
 														!patientId ||
 														isSubmitting
 													}

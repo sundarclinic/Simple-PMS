@@ -23,11 +23,11 @@ type PaymentTableProps = Payment & { invoice: Invoice; patient: Patient };
 export const paymentColumns: ColumnDef<PaymentTableProps>[] = [
 	{
 		accessorKey: 'date',
-		header: () => <div className='hidden sm:block'>Payment Date</div>,
+		header: 'Payment Date',
 		cell: ({ row }) => {
 			const { date } = row.original;
 			return (
-				<div className='hidden sm:block'>
+				<div className=''>
 					{date ? dateFormatter(new Date(date)) : null}
 				</div>
 			);
@@ -47,14 +47,10 @@ export const paymentColumns: ColumnDef<PaymentTableProps>[] = [
 	},
 	{
 		accessorKey: 'notes',
-		header: () => (
-			<div className='hidden sm:max-w-[12rem] sm:block'>Notes</div>
-		),
+		header: () => <div className='sm:max-w-[12rem]'>Notes</div>,
 		cell: ({ row }) => {
 			const { notes } = row.original;
-			return (
-				<div className='sm:max-w-[12rem] hidden sm:block'>{notes}</div>
-			);
+			return <div className='sm:max-w-[12rem]'>{notes}</div>;
 		},
 	},
 	{

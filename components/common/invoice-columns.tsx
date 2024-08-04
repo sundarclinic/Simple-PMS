@@ -25,11 +25,11 @@ type InvoicesTableProps = Invoice & { patient: Patient };
 export const invoiceColumns: ColumnDef<InvoicesTableProps>[] = [
 	{
 		accessorKey: 'createdAt',
-		header: () => <div className='hidden sm:block'>Created At</div>,
+		header: () => 'Created At',
 		cell: ({ row }) => {
 			const { createdAt } = row.original;
 			return (
-				<div className='hidden sm:block'>
+				<div className=''>
 					{createdAt ? dateFormatter(new Date(createdAt)) : null}
 				</div>
 			);
@@ -42,6 +42,10 @@ export const invoiceColumns: ColumnDef<InvoicesTableProps>[] = [
 			const { dueDate } = row.original;
 			return dueDate ? dateFormatter(new Date(dueDate)) : null;
 		},
+	},
+	{
+		accessorKey: 'title',
+		header: 'Title',
 	},
 	{
 		accessorKey: 'amount',

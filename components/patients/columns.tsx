@@ -20,17 +20,13 @@ import { ColumnDef } from '@tanstack/react-table';
 export const patientColums: ColumnDef<Patient>[] = [
 	{
 		accessorKey: 'image',
-		header: () => (
-			<div className='hidden sm:block'>
-				<span className='sr-only'>Image</span>
-			</div>
-		),
+		header: 'Image',
 		cell: ({ row }) => {
 			const { image } = row.original;
 			return image ? (
 				<Image
 					alt={row.getValue('name')}
-					className='aspect-square rounded-md object-cover hidden sm:block'
+					className='aspect-square rounded-md object-cover'
 					height='64'
 					src={image}
 					width='64'
@@ -49,19 +45,15 @@ export const patientColums: ColumnDef<Patient>[] = [
 	},
 	{
 		accessorKey: 'age',
-		header: () => <div className='hidden sm:block'>Age</div>,
-		cell: ({ row }) => {
-			const { age } = row.original;
-			return <div className='hidden sm:block'>{age}</div>;
-		},
+		header: 'Age',
 	},
 	{
 		accessorKey: 'dob',
-		header: () => <div className='hidden sm:block'>Date of Birth</div>,
+		header: 'Date of Birth',
 		cell: ({ row }) => {
 			const { dob } = row.original;
 			return (
-				<div className='hidden sm:block'>
+				<div className=''>
 					{dob ? dateFormatter(new Date(dob)) : null}
 				</div>
 			);
@@ -69,16 +61,10 @@ export const patientColums: ColumnDef<Patient>[] = [
 	},
 	{
 		accessorKey: 'address',
-		header: () => (
-			<div className='hidden sm:max-w-[12rem] sm:block'>Address</div>
-		),
+		header: () => <div className='sm:max-w-[12rem]'>Address</div>,
 		cell: ({ row }) => {
 			const { address } = row.original;
-			return (
-				<div className='sm:max-w-[12rem] hidden sm:block'>
-					{address}
-				</div>
-			);
+			return <div className='sm:max-w-[12rem]'>{address}</div>;
 		},
 	},
 	{

@@ -32,6 +32,10 @@ export const invoiceColumns: ColumnDef<InvoicesTableProps>[] = [
 		header: 'Phone',
 	},
 	{
+		accessorKey: 'title',
+		header: 'Title',
+	},
+	{
 		accessorKey: 'dueDate',
 		header: 'Due Date',
 		cell: ({ row }) => {

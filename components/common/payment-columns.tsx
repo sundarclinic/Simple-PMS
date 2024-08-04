@@ -24,11 +24,11 @@ type PaymentTableProps = Payment & { invoice: Invoice; patient: Patient };
 export const paymentColumns: ColumnDef<PaymentTableProps>[] = [
 	{
 		accessorKey: 'date',
-		header: () => <div className='hidden sm:block'>Payment Date</div>,
+		header: 'Payment Date',
 		cell: ({ row }) => {
 			const { date } = row.original;
 			return (
-				<div className='hidden sm:block'>
+				<div className=''>
 					{date ? dateFormatter(new Date(date)) : null}
 				</div>
 			);

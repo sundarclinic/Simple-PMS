@@ -27,17 +27,13 @@ const DeletePayment: React.FC<Props> = ({ payment }) => {
 	const router = useRouter();
 	const {
 		formState: { isSubmitting },
-		getValues,
 	} = useFormContext<InsertPayment>();
 	const [loading, setLoading] = useState(false);
 
 	const handleDelete = async () => {
 		try {
 			setLoading(true);
-			const { message } = await deletePayment(
-				payment?.id,
-				getValues('updateInvoices')
-			);
+			const { message } = await deletePayment(payment?.id);
 			if (message === 'Payment deleted successfully') {
 				toast.success(message);
 				router.push('/dashboard/payments');

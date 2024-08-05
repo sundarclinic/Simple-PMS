@@ -3,17 +3,10 @@
 import db from '@/db';
 import { payments, Payment, InsertPayment } from '@/db/schemas/payments';
 import { Invoice, invoices } from '@/db/schemas/invoices';
-import { patients } from '@/db/schemas/patients';
-import { eq, getTableColumns, DrizzleError, sql, desc } from 'drizzle-orm';
+import { eq, DrizzleError } from 'drizzle-orm';
 import { ActionResponse } from '../types';
 import { revalidatePath } from 'next/cache';
-import {
-	addPaymentToDb,
-	checkPatientHasUnpaidInvoices,
-	decrementInvoicePaymentForPatient,
-	incrementInvoicePaymentForPatient,
-	updatePaymentToDb,
-} from './utils';
+import { addPaymentToDb, updatePaymentToDb } from './utils';
 import { v4 as uuid } from 'uuid';
 import { takeUniqueOrThrow } from '@/db/utils';
 
@@ -69,56 +62,69 @@ export async function markInvoiceAsPaid(
 	invoice: Invoice
 ): Promise<ActionResponse & { id?: Payment['id'] }> {
 	return new Promise(async (resolve, reject) => {
-		console.log(invoice);
-		try {
-			db.transaction(async (trx) => {
-				const response = await trx
-					.update(invoices)
-					.set({
-						paidAmount:
-							invoice.paidAmount +
-							(invoice.amount - invoice.paidAmount),
-						updatedAt: new Date(),
-					})
-					.where(eq(invoices.id, invoice.id))
-					.returning({ updatedId: invoices.id });
-				if (!response[0].updatedId) {
-					resolve({ message: 'Error marking invoice as paid' });
+		db.transaction(async (trx) => {
+			try {
+				const balance = invoice.amount - invoice.paidAmount;
+
+				if (balance === 0) {
+					return resolve({
+						message: 'Invoice is already paid in full',
+					});
 				}
 
-				const payment = await addPaymentToDb(
+				const response = await addPaymentToDb(
 					{
-						data: {
-							id: uuid(),
-							amount: invoice.amount - invoice.paidAmount,
-							date: new Date(),
-							patientId: invoice.patientId,
-							notes: 'Invoice Payment',
-							updateInvoices: false,
-						},
+						id: uuid(),
+						amount: balance,
+						date: new Date(),
+						patientId: invoice.patientId,
 						invoiceId: invoice.id,
 					},
 					trx
-				);
+				).then(takeUniqueOrThrow);
 
-				if (!payment[0]?.insertedId) {
-					resolve({ message: 'Error marking invoice as paid' });
+				if (!response.insertedId) {
+					trx.rollback();
+					return resolve({
+						message: 'Error marking invoice as paid',
+					});
 				}
+
+				const updatedInvoice = await trx
+					.update(invoices)
+					.set({
+						paidAmount: invoice.amount,
+					})
+					.where(eq(invoices.id, invoice.id))
+					.returning({ updatedId: invoices.id })
+					.then(takeUniqueOrThrow);
+
+				if (!updatedInvoice.updatedId) {
+					trx.rollback();
+					return resolve({
+						message: 'Error marking invoice as paid',
+					});
+				}
+
 				revalidatePath('/dashboard/invoices');
 				revalidatePath('/dashboard');
-				revalidatePath('/dashboard/invoices/[id]', 'page');
-				resolve({ message: 'Invoice marked as paid' });
-			});
-		} catch (error) {
-			console.log(error);
-			if (error instanceof DrizzleError) {
-				reject({ message: error.message });
-			} else {
-				reject({
-					message: 'Error marking invoice as paid. Please try again.',
+				revalidatePath(`/dashboard/invoices/${invoice.id}`);
+				return resolve({
+					message: 'Invoice marked as paid successfully',
+					id: response.insertedId,
 				});
+			} catch (error) {
+				console.log(error);
+				if (error instanceof DrizzleError) {
+					reject({ message: error.message });
+				} else {
+					reject({
+						message:
+							'Error marking invoice as paid. Please try again.',
+					});
+				}
 			}
-		}
+		});
 	});
 }
 
@@ -305,73 +311,66 @@ export async function editPayment(
 }
 
 export async function deletePayment(
-	id: Payment['id'],
-	updateInvoices: boolean
+	id: Payment['id']
 ): Promise<ActionResponse & { id?: Payment['id'] }> {
 	return new Promise(async (resolve, reject) => {
-		try {
-			if (updateInvoices) {
-				const payment = await getPaymentById(id);
-				if (!payment) return { message: 'Payment not found' };
-
-				db.transaction(async (trx) => {
-					const unpaidInvoices = await checkPatientHasUnpaidInvoices(
-						payment.patient.id
-					);
-
-					await decrementInvoicePaymentForPatient(
-						{
-							paymentInfo: payment as unknown as InsertPayment,
-							unpaidInvoices,
-						},
-						trx
-					);
-
-					const response = await db
-						.delete(payments)
-						.where(eq(payments.id, id))
-						.returning({ deletedId: payments.id });
-					if (!response[0]?.deletedId) {
-						resolve({
-							message:
-								'Error deleting payment. Please try again.',
-						});
-					}
-					revalidatePath('/dashboard/payments');
-					revalidatePath('/dashboard');
-					resolve({
-						message: 'Payment deleted successfully',
-						id: response[0].deletedId,
-					});
+		db.transaction(async (trx) => {
+			try {
+				const payment = await db.query.payments.findFirst({
+					where: (payments, { eq }) => eq(payments.id, id),
+					with: {
+						invoice: true,
+					},
 				});
 
-				return { message: 'Payment deleted successfully' };
-			} else {
-				const response = await db
+				if (!payment) {
+					return resolve({ message: 'Payment not found' });
+				}
+
+				if (payment.invoiceId) {
+					const updatedInvoice = await trx
+						.update(invoices)
+						.set({
+							paidAmount:
+								payment.invoice.paidAmount - payment.amount,
+						})
+						.where(eq(invoices.id, payment.invoiceId))
+						.returning({ updatedId: invoices.id })
+						.then(takeUniqueOrThrow);
+
+					if (!updatedInvoice.updatedId) {
+						trx.rollback();
+						return resolve({ message: 'Error deleting payment' });
+					}
+				}
+
+				const response = await trx
 					.delete(payments)
 					.where(eq(payments.id, id))
-					.returning({ deletedId: payments.id });
-				if (!response[0]?.deletedId) {
-					resolve({
+					.returning({ deletedId: payments.id })
+					.then(takeUniqueOrThrow);
+
+				if (!response.deletedId) {
+					trx.rollback();
+					return resolve({ message: 'Error deleting payment' });
+				}
+
+				revalidatePath('/dashboard/payments');
+				revalidatePath('/dashboard');
+				return resolve({
+					message: 'Payment deleted successfully',
+					id: response.deletedId,
+				});
+			} catch (error) {
+				console.log(error);
+				if (error instanceof DrizzleError) {
+					reject({ message: error.message });
+				} else {
+					reject({
 						message: 'Error deleting payment. Please try again.',
 					});
 				}
-				revalidatePath('/dashboard/payments');
-				revalidatePath('/dashboard');
-				resolve({
-					message: 'Payment deleted successfully',
-					id: response[0].deletedId,
-				});
 			}
-		} catch (error) {
-			console.log(error);
-			if (error instanceof DrizzleError) {
-				reject({ message: error.message });
-			} else {
-				reject({
-					message: 'Error deleting payment. Please try again.',
-				});
-			}
-		}
+		});
 	});
 }

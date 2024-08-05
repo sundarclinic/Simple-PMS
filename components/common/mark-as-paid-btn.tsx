@@ -24,7 +24,7 @@ const MarkInvoiceAsPaidBtn: React.FC<Props> = ({ invoice, className }) => {
 		try {
 			setLoading(true);
 			const { message } = await markInvoiceAsPaid(invoice);
-			if (message === 'Invoice marked as paid') {
+			if (message === 'Invoice marked as paid successfully') {
 				toast.success(message);
 			} else {
 				toast.error(message);

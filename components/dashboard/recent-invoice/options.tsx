@@ -33,7 +33,7 @@ const Options: React.FC<Props> = ({ invoice, handlePrint }) => {
 		invoice.patient.name
 	} you have pending payment of ${currencyFormatter(
 		invoice.invoice.amount - invoice.invoice.paidAmount
-	)} to Sundar Clinic due on ${dateFormatter(
+	)} for ${invoice.invoice.title} to Sundar Clinic due on ${dateFormatter(
 		new Date(invoice.invoice.dueDate)
 	)}. Please make the payment at your earliest convenience. Thank you!`;
 

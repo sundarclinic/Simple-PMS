@@ -15,6 +15,10 @@ const InvoiceDetails: React.FC<Props> = ({ invoice }) => {
 			<div className='font-semibold'>Invoice Details</div>
 			<ul className='grid gap-3'>
 				<li className='flex items-center justify-between'>
+					<span className='text-muted-foreground'>Title</span>
+					<span>{invoice.title}</span>
+				</li>
+				<li className='flex items-center justify-between'>
 					<span className='text-muted-foreground'>Amount</span>
 					<span>{currencyFormatter(invoice.amount)}</span>
 				</li>

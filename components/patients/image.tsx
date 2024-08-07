@@ -198,7 +198,6 @@ const PatientImage = () => {
 												accept='image/*'
 												className='hidden'
 												onChange={handleFileChange}
-												capture='environment'
 												disabled={
 													isSubmitting || loading
 												}

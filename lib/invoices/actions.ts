@@ -75,7 +75,8 @@ export const getPatientInvoices = async (patientId: string) => {
 			})
 			.from(invoices)
 			.where(eq(invoices.patientId, patientId))
-			.leftJoin(patients, eq(invoices.patientId, patients.id));
+			.leftJoin(patients, eq(invoices.patientId, patients.id))
+			.orderBy(desc(invoices.dueDate));
 		return allInvoices;
 	} catch (error) {
 		console.log(error);
@@ -101,7 +102,8 @@ export const getInvoicesByTitleForPatient = async ({
 					ilike(invoices.title, `%${title}%`),
 					not(eq(invoices.paidAmount, invoices.amount))
 				)
-			);
+			)
+			.orderBy(desc(invoices.dueDate));
 		if (results.length === 0) return null;
 		return results;
 	} catch (error) {

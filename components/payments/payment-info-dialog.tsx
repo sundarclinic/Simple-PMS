@@ -27,14 +27,16 @@ interface Props
 	extends React.HTMLAttributes<
 		React.ComponentPropsWithoutRef<typeof Dialog>
 	> {
-	payment: Payment & { invoice: Invoice; patient: Patient };
+	payment: Payment & { invoice?: Invoice | undefined; patient: Patient };
 }
 
 const PaymentInfoDialog: React.FC<Props> = ({ payment }) => {
 	const componentRef = useRef(null);
 	const handlePrint = useReactToPrint({
 		content: () => componentRef.current,
-		documentTitle: `Payment ${payment.id} for Invoice ${payment.invoice.id} - ${payment.patient.name} - Sundar Clinic`,
+		documentTitle: `Payment ${payment.id} for ${
+			payment.invoice ? `Invoice ${payment.invoice.id} - ` : ' '
+		}${payment.patient.name} - Sundar Clinic`,
 		removeAfterPrint: true,
 	});
 	return (
@@ -57,7 +59,7 @@ const PaymentInfoDialog: React.FC<Props> = ({ payment }) => {
 								target='_blank'
 								className='text-blue-500 hover:underline text-sm'
 							>
-								Invoice {payment.invoiceId}
+								{payment.invoice.title}
 							</Link>
 						) : (
 							<span>No invoice linked</span>

@@ -11,12 +11,13 @@ import {
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { MoreVertical, Copy, Printer } from 'lucide-react';
+import { MoreVertical, Copy, Printer, Share } from 'lucide-react';
 
 import { Invoice } from '@/db/schemas/invoices';
 import { Patient } from '@/db/schemas/patients';
 import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard';
-import { currencyFormatter, dateFormatter } from '@/lib/utils';
+import { cn, currencyFormatter, dateFormatter } from '@/lib/utils';
+import { toast } from 'sonner';
 
 interface Props
 	extends React.HTMLAttributes<
@@ -37,6 +38,20 @@ const Options: React.FC<Props> = ({ invoice, handlePrint }) => {
 		new Date(invoice.invoice.dueDate)
 	)}. Please make the payment at your earliest convenience. Thank you!`;
 
+	const handleShare = async () => {
+		try {
+			const shareData = {
+				title: 'Invoice Details',
+				text,
+				// TODO: Add Public URL for the invoice
+				// url: window.location.href,
+			};
+			await navigator.share(shareData);
+		} catch (error) {
+			toast.error('Failed to share invoice details');
+		}
+	};
+
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
@@ -56,6 +71,18 @@ const Options: React.FC<Props> = ({ invoice, handlePrint }) => {
 					>
 						Edit Invoice
 					</Link>
+				</DropdownMenuItem>
+				<DropdownMenuItem
+					role='button'
+					className={cn('cursor-pointer flex items-center gap-2')}
+					onClick={(e) => {
+						e.preventDefault();
+						handleShare();
+					}}
+					onSelect={(e) => e.preventDefault()}
+				>
+					<Share size={16} />
+					Share
 				</DropdownMenuItem>
 				<DropdownMenuItem
 					role='button'

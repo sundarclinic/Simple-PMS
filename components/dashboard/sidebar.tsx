@@ -16,7 +16,7 @@ import { DASHBOARD_NAV_ITEMS } from '@/lib/navigation';
 const Sidebar = () => {
 	const pathname = usePathname();
 	return (
-		<aside className='fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex'>
+		<aside className='fixed inset-y-0 left-0 z-50 hidden w-14 flex-col border-r bg-background sm:flex'>
 			<nav className='flex flex-col items-center gap-4 px-2 sm:py-4'>
 				{DASHBOARD_NAV_ITEMS.map((item) => (
 					<Tooltip key={`sidebar-item-${item.href}`}>
@@ -44,7 +44,7 @@ const Sidebar = () => {
 								<span className='sr-only'>{item.label}</span>
 							</Link>
 						</TooltipTrigger>
-						<TooltipContent side='right'>
+						<TooltipContent side='right' className='z-40'>
 							{item.label}
 						</TooltipContent>
 					</Tooltip>

@@ -50,6 +50,7 @@ export const getPatientPayments = async (patientId: string) => {
 				invoice: true,
 				patient: true,
 			},
+			orderBy: (payments, { desc }) => desc(payments.date),
 		});
 		return allPayments;
 	} catch (error) {

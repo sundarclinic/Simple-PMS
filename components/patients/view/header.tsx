@@ -49,7 +49,11 @@ const PatientHeader: React.FC<Props> = ({ patient }) => {
 				className={`bg-cover bg-center bg-no-repeat h-14 md:h-32`}
 			>
 				<Avatar className='border-2 border-white w-16 h-16 md:w-24 md:h-24 relative md:-bottom-12'>
-					<AvatarImage src={patient.image} alt={patient.name} />
+					<AvatarImage
+						src={patient.image}
+						alt={patient.name}
+						className='w-full h-auto aspect-square object-cover'
+					/>
 					<AvatarFallback>
 						{patient.name
 							.split(' ')

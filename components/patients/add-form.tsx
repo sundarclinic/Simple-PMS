@@ -4,7 +4,6 @@ import React, { useEffect, useRef } from 'react';
 
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { SubmitButton } from '@/components/ui/submit-button';
@@ -84,9 +83,6 @@ const PatientAddForm = () => {
 					<h1 className='flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0'>
 						New Patient
 					</h1>
-					<Badge variant='outline' className='ml-auto sm:ml-0'>
-						No Dues
-					</Badge>
 					<div className='hidden items-center gap-2 md:ml-auto md:flex'>
 						<Button variant='outline' size='sm' asChild>
 							<Link href='/dashboard/patients'>Discard</Link>

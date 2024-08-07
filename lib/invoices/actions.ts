@@ -84,6 +84,27 @@ export const getPatientInvoices = async (patientId: string) => {
 	}
 };
 
+export const checkIfPatientHasPendingInvoices = async (
+	patientId: Patient['id']
+) => {
+	try {
+		const result = await db
+			.select()
+			.from(invoices)
+			.where(
+				and(
+					eq(invoices.patientId, patientId),
+					not(eq(invoices.paidAmount, invoices.amount))
+				)
+			);
+		console.log(result);
+		return result.length > 0;
+	} catch (error) {
+		console.log(error);
+		return false;
+	}
+};
+
 export const getInvoicesByTitleForPatient = async ({
 	title,
 	patientId,

@@ -5,7 +5,6 @@ import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { SubmitButton } from '@/components/ui/submit-button';
-import { Badge } from '@/components/ui/badge';
 import { ChevronLeft } from 'lucide-react';
 import { Form } from '@/components/ui/form';
 
@@ -78,9 +77,6 @@ const InvoicesAddForm = () => {
 					<h1 className='flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0'>
 						New Invoice
 					</h1>
-					<Badge variant='outline' className='ml-auto sm:ml-0'>
-						To be paid
-					</Badge>
 					<div className='hidden items-center gap-2 md:ml-auto md:flex'>
 						<Button variant='outline' size='sm' asChild>
 							<Link href='/dashboard/invoices'>Discard</Link>

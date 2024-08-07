@@ -24,9 +24,10 @@ import { useRouter } from 'next/navigation';
 interface Props
 	extends React.HTMLAttributes<React.ComponentPropsWithoutRef<'div'>> {
 	patient: Patient | null;
+	patientHasDues: boolean;
 }
 
-const PatientEditForm: React.FC<Props> = ({ patient }) => {
+const PatientEditForm: React.FC<Props> = ({ patient, patientHasDues }) => {
 	const router = useRouter();
 	const form = useForm<InsertPatient>({
 		resolver: zodResolver(insertPatient),
@@ -113,8 +114,11 @@ const PatientEditForm: React.FC<Props> = ({ patient }) => {
 					<h1 className='flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0'>
 						{patient?.name || 'New Patient'}
 					</h1>
-					<Badge variant='outline' className='ml-auto sm:ml-0'>
-						No Dues
+					<Badge
+						variant={patientHasDues ? 'destructive' : 'outline'}
+						className='ml-auto sm:ml-0'
+					>
+						{patientHasDues ? 'Has Dues' : 'No Dues'}
 					</Badge>
 					<div className='hidden items-center gap-2 md:ml-auto md:flex'>
 						<Button variant='outline' size='sm' asChild>

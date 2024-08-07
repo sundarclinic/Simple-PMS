@@ -7,6 +7,7 @@ import { redirect } from 'next/navigation';
 import { PageParams } from '@/lib/types';
 import { getPatientById } from '@/lib/patients/actions';
 import { Metadata } from 'next';
+import { checkIfPatientHasPendingInvoices } from '@/lib/invoices/actions';
 
 export const metadata: Metadata = {
 	title: 'Edit Patient',
@@ -35,9 +36,14 @@ const IndividualPatient = async ({ params }: EditPageParams) => {
 		return redirect('/dashboard/patients');
 	}
 
+	const patientHasDues = await checkIfPatientHasPendingInvoices(patient.id);
+
 	return (
 		<div className='grid items-start gap-4 md:gap-8'>
-			<PatientEditForm patient={patient} />
+			<PatientEditForm
+				patient={patient}
+				patientHasDues={patientHasDues}
+			/>
 		</div>
 	);
 };

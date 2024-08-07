@@ -128,7 +128,8 @@ const PatientImage = () => {
 			<CardHeader>
 				<CardTitle>Patient Image</CardTitle>
 				<CardDescription>
-					Upload or change patient image below.
+					Upload or change patient image below. (Use a square image
+					(1:1 ratio) for best results)
 				</CardDescription>
 			</CardHeader>
 			<CardContent>

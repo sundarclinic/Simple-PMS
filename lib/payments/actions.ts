@@ -9,9 +9,11 @@ import { revalidatePath } from 'next/cache';
 import { addPaymentToDb, updatePaymentToDb } from './utils';
 import { v4 as uuid } from 'uuid';
 import { takeUniqueOrThrow } from '@/db/utils';
+import { isUserAuthenticated } from '@/utils/supabase/server';
 
 export const getPaymentById = async (id: Payment['id']) => {
 	try {
+		await isUserAuthenticated();
 		const payment = await db.query.payments.findFirst({
 			where: (payments, { eq }) => eq(payments.id, id),
 			with: {
@@ -28,6 +30,7 @@ export const getPaymentById = async (id: Payment['id']) => {
 
 export const getPayments = async () => {
 	try {
+		await isUserAuthenticated();
 		const allPayments = await db.query.payments.findMany({
 			with: {
 				invoice: true,
@@ -44,6 +47,7 @@ export const getPayments = async () => {
 
 export const getPatientPayments = async (patientId: string) => {
 	try {
+		await isUserAuthenticated();
 		const allPayments = await db.query.payments.findMany({
 			where: (payments, { eq }) => eq(payments.patientId, patientId),
 			with: {
@@ -65,6 +69,7 @@ export async function markInvoiceAsPaid(
 	return new Promise(async (resolve, reject) => {
 		db.transaction(async (trx) => {
 			try {
+				await isUserAuthenticated();
 				const balance = invoice.amount - invoice.paidAmount;
 
 				if (balance === 0) {
@@ -135,6 +140,7 @@ export async function addPayment(
 	return new Promise(async (resolve, reject) => {
 		db.transaction(async (trx) => {
 			try {
+				await isUserAuthenticated();
 				if (data.invoiceId) {
 					const invoice = await db
 						.select()
@@ -203,6 +209,7 @@ export async function editPayment(
 	return new Promise(async (resolve, reject) => {
 		db.transaction(async (trx) => {
 			try {
+				await isUserAuthenticated();
 				const previousPayment = await db.query.payments.findFirst({
 					where: (payments, { eq }) => eq(payments.id, data.id),
 					with: {
@@ -317,6 +324,7 @@ export async function deletePayment(
 	return new Promise(async (resolve, reject) => {
 		db.transaction(async (trx) => {
 			try {
+				await isUserAuthenticated();
 				const payment = await db.query.payments.findFirst({
 					where: (payments, { eq }) => eq(payments.id, id),
 					with: {

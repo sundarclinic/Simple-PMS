@@ -21,9 +21,11 @@ import {
 import { ActionResponse } from '@/lib/types';
 import { Patient, patients } from '@/db/schemas/patients';
 import { revalidatePath } from 'next/cache';
+import { isUserAuthenticated } from '@/utils/supabase/server';
 
 export const getInvoiceById = async (id: Invoice['id']) => {
 	try {
+		await isUserAuthenticated();
 		const result = await db
 			.select({
 				invoice: invoices,
@@ -48,6 +50,7 @@ type GetInvoiceArgs =
 
 export const getInvoices = async (options?: GetInvoiceArgs) => {
 	try {
+		await isUserAuthenticated();
 		const invoiceColumns = getTableColumns(invoices);
 		const allInvoices = await db
 			.select({
@@ -67,6 +70,7 @@ export const getInvoices = async (options?: GetInvoiceArgs) => {
 
 export const getPatientInvoices = async (patientId: string) => {
 	try {
+		await isUserAuthenticated();
 		const invoiceColumns = getTableColumns(invoices);
 		const allInvoices = await db
 			.select({
@@ -88,6 +92,7 @@ export const checkIfPatientHasPendingInvoices = async (
 	patientId: Patient['id']
 ) => {
 	try {
+		await isUserAuthenticated();
 		const result = await db
 			.select()
 			.from(invoices)
@@ -97,7 +102,6 @@ export const checkIfPatientHasPendingInvoices = async (
 					not(eq(invoices.paidAmount, invoices.amount))
 				)
 			);
-		console.log(result);
 		return result.length > 0;
 	} catch (error) {
 		console.log(error);
@@ -113,6 +117,7 @@ export const getInvoicesByTitleForPatient = async ({
 	patientId: Patient['id'];
 }) => {
 	try {
+		await isUserAuthenticated();
 		if (!title) return [];
 		const results = await db
 			.select()
@@ -137,6 +142,7 @@ export async function addInvoice(
 	data: InsertInvoice
 ): Promise<ActionResponse & { id?: Invoice['id'] }> {
 	try {
+		await isUserAuthenticated();
 		const result = await db
 			.insert(invoices)
 			.values({
@@ -170,6 +176,7 @@ export async function editInvoice(
 	data: InsertInvoice
 ): Promise<ActionResponse & { id?: Invoice['id'] }> {
 	try {
+		await isUserAuthenticated();
 		const result = await db
 			.update(invoices)
 			.set({
@@ -205,6 +212,7 @@ export async function deleteInvoice(
 	id: Invoice['id']
 ): Promise<ActionResponse> {
 	try {
+		await isUserAuthenticated();
 		const result = await db
 			.delete(invoices)
 			.where(eq(invoices.id, id))

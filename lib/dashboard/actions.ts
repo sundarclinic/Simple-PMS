@@ -1,10 +1,12 @@
 import db from '@/db';
 import { invoices } from '@/db/schemas/invoices';
 import { payments } from '@/db/schemas/payments';
+import { isUserAuthenticated } from '@/utils/supabase/server';
 import { sql, lte, and, gte, count, not } from 'drizzle-orm';
 
 export const getDashboardInsights = async () => {
 	try {
+		await isUserAuthenticated();
 		const outstandingInvoices = await db
 			.select({
 				total: sql<number>`SUM(${invoices.amount}) - SUM(${invoices.paidAmount})`,

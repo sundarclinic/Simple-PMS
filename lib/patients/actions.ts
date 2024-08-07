@@ -10,9 +10,11 @@ import {
 import { DrizzleError, eq, desc, ilike, or } from 'drizzle-orm';
 import { ActionResponse } from '@/lib/types';
 import { revalidatePath } from 'next/cache';
+import { isUserAuthenticated } from '@/utils/supabase/server';
 
 export const getPatientById = async (id: Patient['id']) => {
 	try {
+		await isUserAuthenticated();
 		const patient = await db
 			.select()
 			.from(patients)
@@ -27,6 +29,7 @@ export const getPatientById = async (id: Patient['id']) => {
 
 export const getPatients = async () => {
 	try {
+		await isUserAuthenticated();
 		const allPatients = await db
 			.select()
 			.from(patients)
@@ -40,6 +43,7 @@ export const getPatients = async () => {
 
 export const getPatientsByName = async (name: Patient['name']) => {
 	try {
+		await isUserAuthenticated();
 		if (!name) return [];
 		const results = await db
 			.select()
@@ -62,6 +66,7 @@ export async function addPatient(
 	data: InsertPatient
 ): Promise<ActionResponse & { id?: Patient['id'] }> {
 	try {
+		await isUserAuthenticated();
 		const result = await db
 			.insert(patients)
 			.values({
@@ -108,6 +113,7 @@ export async function editPatient(
 	data: InsertPatient
 ): Promise<ActionResponse & { id?: Patient['id'] }> {
 	try {
+		await isUserAuthenticated();
 		const result = await db
 			.update(patients)
 			.set({
@@ -145,6 +151,7 @@ export async function deletePatient(
 	id: Patient['id']
 ): Promise<ActionResponse> {
 	try {
+		await isUserAuthenticated();
 		const result = await db
 			.delete(patients)
 			.where(eq(patients.id, id))

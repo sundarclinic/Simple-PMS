@@ -22,7 +22,7 @@ export async function generateMetadata({
 		};
 	}
 	return {
-		title: `Invoice for ${invoice.patient.name}`,
+		title: `${invoice.invoice.title} - Invoice for ${invoice.patient.name}`,
 	};
 }
 

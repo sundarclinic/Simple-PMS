@@ -71,6 +71,13 @@
       "when": 1722617169283,
       "tag": "0009_stormy_true_believers",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1723382712812,
+      "tag": "0010_slimy_captain_stacy",
+      "breakpoints": true
     }
   ]
 }

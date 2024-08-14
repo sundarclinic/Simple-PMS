@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { MoreHorizontal } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
 	DropdownMenu,
@@ -12,6 +11,7 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import DeletePaitentDialog from './delete-patient-dialog';
 
 import { Patient } from '@/db/schemas/patients';
 import { dateFormatter } from '@/lib/utils';
@@ -93,7 +93,15 @@ export const patientColums: ColumnDef<Patient>[] = [
 								Edit
 							</Link>
 						</DropdownMenuItem>
-						<DropdownMenuItem>Delete</DropdownMenuItem>
+						<DropdownMenuItem
+							className='m-0'
+							onClick={(e) => e.preventDefault()}
+							onSelect={(e) => e.preventDefault()}
+						>
+							<DeletePaitentDialog patient={row.original}>
+								Delete
+							</DeletePaitentDialog>
+						</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>
 			);

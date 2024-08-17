@@ -1,4 +1,6 @@
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
 
 import {
 	Dialog,
@@ -11,8 +13,12 @@ import {
 	DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '../ui/button';
+import { RotateCw } from 'lucide-react';
 
 import { Payment } from '@/db/schemas/payments';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+import { deletePayment } from '@/lib/payments/actions';
 
 interface Props
 	extends React.HTMLAttributes<
@@ -26,8 +32,33 @@ const DeletePaymentDialog: React.FC<Props> = ({
 	payment,
 	...props
 }) => {
+	const router = useRouter();
+	const [open, setOpen] = useState(false);
+	const [loading, setLoading] = useState(false);
+
+	const handleToggleOpen = (value: boolean) => {
+		setOpen(value);
+	};
+
+	const handleDelete = async () => {
+		try {
+			setLoading(true);
+			const { message } = await deletePayment(payment?.id as string);
+			if (message === 'Payment deleted successfully') {
+				handleToggleOpen(false);
+				toast.success(message);
+				router.push('/dashboard/payments');
+			} else {
+				toast.error(message);
+			}
+		} catch (error) {
+			toast.error('Error deleting payment. Please try again.');
+		} finally {
+			setLoading(false);
+		}
+	};
 	return (
-		<Dialog {...props}>
+		<Dialog {...props} open={open} onOpenChange={handleToggleOpen}>
 			<DialogTrigger className='w-full text-left'>
 				{children}
 			</DialogTrigger>
@@ -48,8 +79,17 @@ const DeletePaymentDialog: React.FC<Props> = ({
 							Cancel
 						</Button>
 					</DialogClose>
-					<Button variant='destructive' className='md:w-full'>
-						Delete
+					<Button
+						size='sm'
+						variant='destructive'
+						disabled={loading}
+						onClick={handleDelete}
+						className='md:w-full'
+					>
+						{loading ? (
+							<RotateCw size={16} className='animate-spin mr-2' />
+						) : null}
+						{loading ? 'Deleting...' : 'Delete'}
 					</Button>
 				</DialogFooter>
 			</DialogContent>

@@ -8,10 +8,9 @@ export const contentEnum = pgEnum('content', ['invoice', 'payment', 'patient']);
 
 export const temporaryPages = pgTable('temporary_pages', {
 	id: uuid('id').primaryKey(),
-	slug: text('slug').unique().notNull(),
-	title: text('title').notNull(),
 	content: contentEnum('content').notNull(),
 	sourceId: uuid('source_id').notNull(),
+	slug: uuid('slug').unique().notNull(),
 	expiresAt: timestamp('expires_at')
 		.notNull()
 		.$defaultFn(() => {
@@ -37,3 +36,5 @@ export const temporaryPageRelations = relations(temporaryPages, ({ one }) => ({
 		references: [payments.id],
 	}),
 }));
+
+export type TemporaryPage = typeof temporaryPages.$inferSelect;

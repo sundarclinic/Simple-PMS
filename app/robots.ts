@@ -6,8 +6,8 @@ export default function robots(): MetadataRoute.Robots {
 		rules: {
 			userAgent: '*',
 			allow: ['/'],
-			disallow: ['/dashboard/'],
+			disallow: ['/dashboard/', '/t/'],
 		},
-		sitemap: PMS_URL.toString() + '/sitemap.xml',
+		sitemap: PMS_URL.toString() + 'sitemap.xml',
 	};
 }

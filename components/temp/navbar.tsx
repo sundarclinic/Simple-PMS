@@ -8,7 +8,7 @@ import { CLINIC_LOCATION_URL, CLINIC_URL } from '@/lib/config';
 
 const Navbar = () => {
 	return (
-		<nav className='p-4 w-full'>
+		<nav className='p-4 w-full border-b sticky top-0 bg-white'>
 			<div className='max-w-6xl mx-auto flex items-center justify-between gap-4 flex-wrap'>
 				<Link
 					href={CLINIC_URL.toString()}

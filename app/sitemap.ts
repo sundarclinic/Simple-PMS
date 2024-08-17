@@ -10,7 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 			priority: 1,
 		},
 		{
-			url: PMS_URL.toString() + '/login',
+			url: PMS_URL.toString() + 'login',
 			lastModified: new Date(),
 			changeFrequency: 'yearly',
 			priority: 1,

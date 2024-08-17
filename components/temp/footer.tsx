@@ -7,7 +7,7 @@ import { CLINIC_URL } from '@/lib/config';
 const Footer = () => {
 	return (
 		<footer className='p-4'>
-			<div className='max-w-6xl mx-auto'>
+			<div className='max-w-6xl mx-auto text-center'>
 				<q className='font-semibold'>
 					Not just a better healthcare, but a better healthcare
 					experience.

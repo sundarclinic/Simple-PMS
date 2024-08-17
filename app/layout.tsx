@@ -43,6 +43,12 @@ export default function RootLayout({
 			lang='en'
 			className={cn(sourceSans3.className, poppins.className)}
 		>
+			<head>
+				<meta
+					name='viewport'
+					content='minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, user-scalable=no, viewport-fit=cover'
+				/>
+			</head>
 			<body className='bg-background text-foreground font-sans'>
 				<TooltipProvider>
 					{children}

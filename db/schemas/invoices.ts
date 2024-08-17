@@ -13,6 +13,7 @@ import { relations } from 'drizzle-orm';
 
 import { patients } from './patients';
 import { payments } from './payments';
+import { temporaryPages } from './temporaryPages';
 
 export const invoices = pgTable('invoices', {
 	id: uuid('id').primaryKey(),
@@ -79,4 +80,5 @@ export const invoiceRelations = relations(invoices, ({ one, many }) => ({
 		fields: [invoices.patientId],
 		references: [patients.id],
 	}),
+	temporaryPages: many(temporaryPages),
 }));

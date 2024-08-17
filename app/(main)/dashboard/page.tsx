@@ -1,5 +1,5 @@
 import InvoicesTable from '@/components/dashboard/invoices-table';
-import RecentInvoice from '@/components/dashboard/recent-invoice/index';
+import RecentInvoice from '@/components/common/recent-invoice/index';
 import InsightCard from '@/components/dashboard/insight-card';
 import NoInvoiceSelected from '@/components/dashboard/no-invoice-selected';
 

@@ -11,6 +11,8 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import DeleteInvoiceDialog from './delete-invoice-dialog';
+import TemporaryShare from '../common/temporary-share';
 
 import { ColumnDef } from '@tanstack/react-table';
 import { Patient } from '@/db/schemas/patients';
@@ -135,7 +137,26 @@ export const invoiceColumns: ColumnDef<InvoicesTableProps>[] = [
 								View Patient
 							</Link>
 						</DropdownMenuItem>
-						<DropdownMenuItem>Delete</DropdownMenuItem>
+						<DropdownMenuItem
+							className='m-0'
+							onClick={(e) => e.preventDefault()}
+							onSelect={(e) => e.preventDefault()}
+						>
+							<DeleteInvoiceDialog invoice={row.original}>
+								Delete
+							</DeleteInvoiceDialog>
+						</DropdownMenuItem>
+						<DropdownMenuItem
+							onClick={(e) => e.preventDefault()}
+							onSelect={(e) => e.preventDefault()}
+						>
+							<TemporaryShare
+								sourceId={row.original.id}
+								content='invoice'
+							>
+								Share Invoice
+							</TemporaryShare>
+						</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>
 			);

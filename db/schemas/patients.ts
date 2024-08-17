@@ -12,6 +12,7 @@ import { relations } from 'drizzle-orm';
 
 import { invoices } from './invoices';
 import { payments } from './payments';
+import { temporaryPages } from './temporaryPages';
 
 export const patients = pgTable('paitents', {
 	id: uuid('id').primaryKey(),
@@ -98,4 +99,5 @@ export type InsertPatient = z.infer<typeof insertPatient>;
 export const patientRelations = relations(patients, ({ many }) => ({
 	invoices: many(invoices),
 	payments: many(payments),
+	temporaryPages: many(temporaryPages),
 }));

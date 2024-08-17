@@ -13,6 +13,7 @@ import { relations } from 'drizzle-orm';
 
 import { invoices } from './invoices';
 import { patients } from './patients';
+import { temporaryPages } from './temporaryPages';
 
 export const payments = pgTable('payments', {
 	id: uuid('id').primaryKey(),
@@ -71,7 +72,7 @@ export type Payment = typeof payments.$inferSelect;
 export type InsertPaymentToDb = typeof payments.$inferInsert;
 export type InsertPayment = z.infer<typeof insertPayment>;
 
-export const paymentRelations = relations(payments, ({ one }) => ({
+export const paymentRelations = relations(payments, ({ one, many }) => ({
 	invoice: one(invoices, {
 		fields: [payments.invoiceId],
 		references: [invoices.id],
@@ -80,4 +81,5 @@ export const paymentRelations = relations(payments, ({ one }) => ({
 		fields: [payments.patientId],
 		references: [patients.id],
 	}),
+	temporaryPages: many(temporaryPages),
 }));

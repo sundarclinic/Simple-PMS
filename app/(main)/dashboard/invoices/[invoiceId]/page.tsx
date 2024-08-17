@@ -2,7 +2,7 @@ import React from 'react';
 
 import PatientHeader from '@/components/patients/view/header';
 import PatientDetails from '@/components/patients/view/details';
-import RecentInvoice from '@/components/dashboard/recent-invoice';
+import RecentInvoice from '@/components/common/recent-invoice';
 
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';

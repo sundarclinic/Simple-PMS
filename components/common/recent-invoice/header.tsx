@@ -1,22 +1,21 @@
 import React from 'react';
 
-import { ReceiptText } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import {
 	Card,
 	CardDescription,
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card';
-import Options from './options';
 import { Badge } from '@/components/ui/badge';
+import Options from './options';
+import MarkInvoiceAsPaidBtn from '@/components/common/mark-as-paid-btn';
+import TempOptions from './temp-options';
 
 import { Invoice } from '@/db/schemas/invoices';
 import { Patient } from '@/db/schemas/patients';
 import { capitalize, cn, dateFormatter } from '@/lib/utils';
 import CopyInvoiceIdBtn from './copy-invoice-id-btn';
 import { getInvoiceStatus } from '@/lib/invoices/utils';
-import MarkInvoiceAsPaidBtn from '@/components/common/mark-as-paid-btn';
 
 interface Props
 	extends React.HTMLAttributes<React.ComponentPropsWithoutRef<typeof Card>> {
@@ -59,6 +58,10 @@ const Header: React.FC<Props> = ({ invoice, handlePrint }) => {
 				<section className='ml-auto'>
 					<div className='flex items-center gap-1'>
 						<MarkInvoiceAsPaidBtn invoice={invoice.invoice} />
+						<TempOptions
+							invoice={invoice}
+							handlePrint={handlePrint}
+						/>
 						<Options invoice={invoice} handlePrint={handlePrint} />
 					</div>
 				</section>

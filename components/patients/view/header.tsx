@@ -21,12 +21,12 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import DeletePaitentDialog from '../delete-patient-dialog';
 import { Phone, Copy, CopyCheck, MoreHorizontal } from 'lucide-react';
 
 import { Patient } from '@/db/schemas/patients';
 import { cn, dateFormatter } from '@/lib/utils';
 import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard';
-import { toast } from 'sonner';
 
 interface Props
 	extends React.HTMLAttributes<React.ComponentPropsWithoutRef<typeof Card>> {
@@ -97,7 +97,15 @@ const PatientHeader: React.FC<Props> = ({ patient }) => {
 									Edit
 								</Link>
 							</DropdownMenuItem>
-							<DropdownMenuItem>Delete</DropdownMenuItem>
+							<DropdownMenuItem
+								className='m-0'
+								onSelect={(e) => e.preventDefault()}
+								onClick={(e) => e.preventDefault()}
+							>
+								<DeletePaitentDialog patient={patient}>
+									Delete
+								</DeletePaitentDialog>
+							</DropdownMenuItem>
 						</DropdownMenuContent>
 					</DropdownMenu>
 				</div>

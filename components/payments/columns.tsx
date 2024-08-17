@@ -11,6 +11,7 @@ import {
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import PaymentInfoDialog from './payment-info-dialog';
+import DeletePaymentDialog from './delete-payment-dialog';
 
 import { ColumnDef } from '@tanstack/react-table';
 import { dateFormatter, currencyFormatter } from '@/lib/utils';
@@ -102,7 +103,15 @@ export const paymentColumns: ColumnDef<PaymentTableProps>[] = [
 								Edit
 							</Link>
 						</DropdownMenuItem>
-						<DropdownMenuItem>Delete</DropdownMenuItem>
+						<DropdownMenuItem
+							className='m-0'
+							onSelect={(e) => e.preventDefault()}
+							onClick={(e) => e.preventDefault()}
+						>
+							<DeletePaymentDialog payment={row.original}>
+								Delete
+							</DeletePaymentDialog>
+						</DropdownMenuItem>
 						<DropdownMenuLabel>Related</DropdownMenuLabel>
 						<DropdownMenuItem asChild className='cursor-pointer'>
 							<Link href={`/dashboard/patients/${patient.id}`}>

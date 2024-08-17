@@ -2,12 +2,10 @@
 
 import React from 'react';
 
-import Link from 'next/link';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
-	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
@@ -18,6 +16,7 @@ import { Patient } from '@/db/schemas/patients';
 import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard';
 import { cn, currencyFormatter, dateFormatter } from '@/lib/utils';
 import { toast } from 'sonner';
+import { usePathname } from 'next/navigation';
 
 interface Props
 	extends React.HTMLAttributes<
@@ -27,8 +26,9 @@ interface Props
 	handlePrint: () => void;
 }
 
-const Options: React.FC<Props> = ({ invoice, handlePrint }) => {
+const TempOptions: React.FC<Props> = ({ invoice, handlePrint }) => {
 	const { handleCopyToClipboard } = useCopyToClipboard();
+	const pathname = usePathname();
 
 	const text = `${
 		invoice.patient.name
@@ -54,7 +54,10 @@ const Options: React.FC<Props> = ({ invoice, handlePrint }) => {
 
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger asChild>
+			<DropdownMenuTrigger
+				asChild
+				className={cn({ hidden: pathname.includes('dashboard') })}
+			>
 				<Button
 					size='icon'
 					variant='outline'
@@ -65,13 +68,6 @@ const Options: React.FC<Props> = ({ invoice, handlePrint }) => {
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align='end'>
-				<DropdownMenuItem asChild className='cursor-pointer'>
-					<Link
-						href={`/dashboard/invoices/edit/${invoice.invoice.id}`}
-					>
-						Edit Invoice
-					</Link>
-				</DropdownMenuItem>
 				<DropdownMenuItem
 					role='button'
 					className={cn('cursor-pointer flex items-center gap-2')}
@@ -108,15 +104,9 @@ const Options: React.FC<Props> = ({ invoice, handlePrint }) => {
 					<Printer size={16} />
 					Print
 				</DropdownMenuItem>
-				<DropdownMenuSeparator />
-				<DropdownMenuItem asChild className='cursor-pointer'>
-					<Link href={`/dashboard/patients/${invoice.patient.id}`}>
-						View Patient
-					</Link>
-				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>
 	);
 };
 
-export default Options;
+export default TempOptions;

@@ -13,12 +13,12 @@ import {
 	DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '../ui/button';
+import { RotateCw } from 'lucide-react';
 
 import { Patient } from '@/db/schemas/patients';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { deletePatient } from '@/lib/patients/actions';
-import { RotateCw } from 'lucide-react';
 
 interface Props
 	extends React.HTMLAttributes<

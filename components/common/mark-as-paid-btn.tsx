@@ -10,6 +10,7 @@ import { Invoice } from '@/db/schemas/invoices';
 import { getInvoiceStatus } from '@/lib/invoices/utils';
 import { toast } from 'sonner';
 import { markInvoiceAsPaid } from '@/lib/payments/actions';
+import { usePathname } from 'next/navigation';
 
 interface Props
 	extends React.HTMLAttributes<React.ComponentPropsWithRef<typeof Button>> {
@@ -19,6 +20,7 @@ interface Props
 const MarkInvoiceAsPaidBtn: React.FC<Props> = ({ invoice, className }) => {
 	const [loading, setLoading] = useState(false);
 	const status = getInvoiceStatus(invoice);
+	const pathname = usePathname();
 
 	const handleMarkAsPaid = async () => {
 		try {
@@ -40,9 +42,11 @@ const MarkInvoiceAsPaidBtn: React.FC<Props> = ({ invoice, className }) => {
 		<Button
 			size='sm'
 			variant='outline'
-			className={cn('h-8 gap-1 print:hidden', className)}
+			className={cn('h-8 gap-1 print:hidden', className, {
+				hidden: pathname.includes('/t/'),
+			})}
 			onClick={handleMarkAsPaid}
-			disabled={loading}
+			disabled={pathname.includes('/t/') || loading}
 		>
 			{loading ? (
 				<RotateCw className='h-3.5 w-3.5 animate-spin' />

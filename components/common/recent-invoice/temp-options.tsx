@@ -43,8 +43,7 @@ const TempOptions: React.FC<Props> = ({ invoice, handlePrint }) => {
 			const shareData = {
 				title: 'Invoice Details',
 				text,
-				// TODO: Add Public URL for the invoice
-				// url: window.location.href,
+				url: window.location.href,
 			};
 			await navigator.share(shareData);
 		} catch (error) {

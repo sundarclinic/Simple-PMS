@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import Link from 'next/link';
 import {
@@ -20,6 +20,11 @@ import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard';
 import { cn, currencyFormatter, dateFormatter } from '@/lib/utils';
 import { toast } from 'sonner';
 import { usePathname } from 'next/navigation';
+import {
+	createTemporaryPage,
+	getTemporaryPageBySourceId,
+} from '@/lib/temp/actions';
+import { PMS_URL } from '@/lib/config';
 
 interface Props
 	extends React.HTMLAttributes<
@@ -32,6 +37,8 @@ interface Props
 const Options: React.FC<Props> = ({ invoice, handlePrint }) => {
 	const { handleCopyToClipboard } = useCopyToClipboard();
 	const pathname = usePathname();
+	const [loading, setLoading] = useState(false);
+	const [shareUrl, setShareUrl] = useState<string | null>(null);
 
 	const text = `${
 		invoice.patient.name
@@ -41,19 +48,55 @@ const Options: React.FC<Props> = ({ invoice, handlePrint }) => {
 		new Date(invoice.invoice.dueDate)
 	)}. Please make the payment at your earliest convenience. Thank you!`;
 
-	const handleShare = async () => {
+	const getShareUrl = async () => {
+		setLoading(true);
 		try {
+			const data = await getTemporaryPageBySourceId(invoice.invoice.id);
+			if (data !== undefined) {
+				const url = `${PMS_URL.toString()}t/${data.slug}`;
+				setShareUrl(url);
+			}
+		} catch (error) {
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const createShareUrl = async () => {
+		const data = await createTemporaryPage({
+			sourceId: invoice.invoice.id,
+			content: 'invoice',
+		});
+		if (
+			data.message === 'Temporary page created successfully' &&
+			data.url
+		) {
+			setShareUrl(data.url);
+		}
+	};
+
+	const handleShare = async () => {
+		setLoading(true);
+		try {
+			if (!shareUrl) {
+				await createShareUrl();
+			}
 			const shareData = {
 				title: 'Invoice Details',
 				text,
-				// TODO: Add Public URL for the invoice
-				// url: window.location.href,
+				url: shareUrl,
 			};
 			await navigator.share(shareData);
 		} catch (error) {
 			toast.error('Failed to share invoice details');
+		} finally {
+			setLoading(false);
 		}
 	};
+
+	useEffect(() => {
+		getShareUrl();
+	}, []);
 
 	return (
 		<DropdownMenu>
@@ -113,17 +156,6 @@ const Options: React.FC<Props> = ({ invoice, handlePrint }) => {
 				>
 					<Printer size={16} />
 					Print
-				</DropdownMenuItem>
-				<DropdownMenuItem
-					onClick={(e) => e.preventDefault()}
-					onSelect={(e) => e.preventDefault()}
-				>
-					<TemporaryShare
-						sourceId={invoice.invoice.id}
-						content='invoice'
-					>
-						Share Invoice
-					</TemporaryShare>
 				</DropdownMenuItem>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem asChild className='cursor-pointer'>

@@ -44,8 +44,7 @@ const PaymentAddForm = () => {
 
 	const onSubmit = async (values: InsertPayment) => {
 		try {
-			console.log(values);
-			const { message, id } = await addPayment(values);
+			const { message } = await addPayment(values);
 			if (message === 'Payment added successfully') {
 				toast.success(message);
 				router.push(`/dashboard/payments`);

@@ -84,7 +84,7 @@ const Options: React.FC<Props> = ({ invoice, handlePrint }) => {
 			const shareData = {
 				title: 'Invoice Details',
 				text,
-				url: shareUrl,
+				...(shareUrl && { url: shareUrl }),
 			};
 			await navigator.share(shareData);
 		} catch (error) {

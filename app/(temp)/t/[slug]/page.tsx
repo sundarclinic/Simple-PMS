@@ -73,13 +73,15 @@ export default async function TemporarySharePage({ params }: ViewPageParams) {
 		<div className='w-full flex flex-col items-center justify-center'>
 			{page ? (
 				<section className='max-w-4xl mx-auto'>
-					{page.content === 'invoice' ? (
+					{page.content === 'invoice' && invoice ? (
 						<RecentInvoice invoice={invoice} />
-					) : page.content === 'patient' ? (
+					) : page.content === 'patient' && patient ? (
 						<></>
-					) : page.content === 'payment' ? (
+					) : page.content === 'payment' && payment ? (
 						<></>
-					) : null}
+					) : (
+						<NothingFound />
+					)}
 				</section>
 			) : (
 				<NothingFound />

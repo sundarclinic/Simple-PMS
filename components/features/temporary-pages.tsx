@@ -26,7 +26,7 @@ export function TemporaryPages() {
 						</p>
 					</div>
 					<Image
-						src='/linear.webp'
+						src='/features/temp-1.png'
 						width={500}
 						height={500}
 						alt='linear demo image'
@@ -54,7 +54,7 @@ export function TemporaryPages() {
 						</p>
 					</div>
 					<Image
-						src='/linear.webp'
+						src='/features/temp-2.png'
 						width={500}
 						height={500}
 						alt='linear demo image'

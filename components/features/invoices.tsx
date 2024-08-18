@@ -23,7 +23,7 @@ export function Invoices() {
 						</p>
 					</div>
 					<Image
-						src='/linear.webp'
+						src='/features/invoice-1.png'
 						width={500}
 						height={500}
 						alt='linear demo image'
@@ -55,7 +55,7 @@ export function Invoices() {
 						</p>
 					</div>
 					<Image
-						src='/linear.webp'
+						src='/features/invoice-2.png'
 						width={500}
 						height={500}
 						alt='linear demo image'

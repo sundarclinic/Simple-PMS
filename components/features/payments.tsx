@@ -26,7 +26,7 @@ export function Payments() {
 						</p>
 					</div>
 					<Image
-						src='/linear.webp'
+						src='/features/payment.png'
 						width={500}
 						height={500}
 						alt='linear demo image'

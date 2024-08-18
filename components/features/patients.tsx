@@ -23,7 +23,7 @@ export function Patients() {
 						</p>
 					</div>
 					<Image
-						src='/linear.webp'
+						src='/features/patient-1.png'
 						width={500}
 						height={500}
 						alt='linear demo image'
@@ -45,7 +45,7 @@ export function Patients() {
 						</p>
 					</div>
 					<Image
-						src='/linear.webp'
+						src='/features/patient-2.png'
 						width={500}
 						height={500}
 						alt='linear demo image'

@@ -10,7 +10,7 @@ import {
 import { DrizzleError, eq, desc, ilike, or } from 'drizzle-orm';
 import { ActionResponse } from '@/lib/types';
 import { revalidatePath } from 'next/cache';
-import { isUserAuthenticated } from '@/utils/supabase/server';
+import { createClient, isUserAuthenticated } from '@/utils/supabase/server';
 
 export const getPatientById = async (id: Patient['id']) => {
 	try {
@@ -152,6 +152,27 @@ export async function deletePatient(
 ): Promise<ActionResponse> {
 	try {
 		await isUserAuthenticated();
+
+		const patient = await getPatientById(id);
+
+		if (!patient) {
+			return {
+				message: 'Patient not found',
+			};
+		}
+
+		if (!patient.image.includes('dicebear')) {
+			const supabase = createClient();
+			// image path eg - https://pzouscxbbynaghyiwovy.supabase.co/storage/v1/object/public/patients/images/13b90866-2c1b-46f4-9caa-6999ae4bfae3.webp
+			const path = patient.image.split('public/patients/')[1];
+			const { error } = await supabase.storage
+				.from('patients')
+				.remove([path]);
+			if (error) {
+				throw new Error('Error deleting patient image');
+			}
+		}
+
 		const result = await db
 			.delete(patients)
 			.where(eq(patients.id, id))

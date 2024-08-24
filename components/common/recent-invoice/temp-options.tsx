@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
 	DropdownMenu,
@@ -29,6 +29,7 @@ interface Props
 const TempOptions: React.FC<Props> = ({ invoice, handlePrint }) => {
 	const { handleCopyToClipboard } = useCopyToClipboard();
 	const pathname = usePathname();
+	const [sharing, setSharing] = useState(false);
 
 	const text = `${
 		invoice.patient.name
@@ -39,6 +40,11 @@ const TempOptions: React.FC<Props> = ({ invoice, handlePrint }) => {
 	)}. Please make the payment at your earliest convenience. Thank you!`;
 
 	const handleShare = async () => {
+		if (!navigator.share) {
+			toast.error('Sharing is not supported in your browser');
+			return;
+		}
+		setSharing(true);
 		try {
 			const shareData = {
 				title: 'Invoice Details',
@@ -48,6 +54,8 @@ const TempOptions: React.FC<Props> = ({ invoice, handlePrint }) => {
 			await navigator.share(shareData);
 		} catch (error) {
 			toast.error('Failed to share invoice details');
+		} finally {
+			setSharing(false);
 		}
 	};
 
@@ -68,6 +76,7 @@ const TempOptions: React.FC<Props> = ({ invoice, handlePrint }) => {
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align='end'>
 				<DropdownMenuItem
+					disabled={sharing}
 					role='button'
 					className={cn('cursor-pointer flex items-center gap-2')}
 					onClick={(e) => {

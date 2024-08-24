@@ -122,6 +122,7 @@ const Options: React.FC<Props> = ({ invoice, handlePrint }) => {
 					</Link>
 				</DropdownMenuItem>
 				<DropdownMenuItem
+					disabled={loading}
 					role='button'
 					className={cn('cursor-pointer flex items-center gap-2')}
 					onClick={(e) => {
